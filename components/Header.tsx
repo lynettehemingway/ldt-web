@@ -19,7 +19,7 @@ export default function Header() {
 
       {/* Navigation Links */}
       <View style={styles.linksContainer}>
-        <Link href={'/index' as any} asChild>
+        <Link href={'/' as any} asChild>
           <TouchableOpacity>
             <Text style={styles.navLink}>Home</Text>
           </TouchableOpacity>
