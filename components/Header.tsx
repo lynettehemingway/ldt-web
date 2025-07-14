@@ -9,11 +9,11 @@ export default function Header() {
       <Link href={'/' as any} asChild>
         <TouchableOpacity style={styles.logoContainer}>
           <Image
-            source={require('../assets/images/logo.png')}
+            source={require('../assets/images/ufldtlogowhite2.png')}
             style={styles.logoImage}
             resizeMode="contain"
           />
-          <Text style={styles.logoText}>UF LION DANCE</Text>
+          <Text style={styles.logoText}>UF LION DANCE TEAM</Text>
         </TouchableOpacity>
       </Link>
 
@@ -55,6 +55,8 @@ const styles = StyleSheet.create({
     position: 'sticky',
     top: 0,
     zIndex: 1000,
+    paddingVertical: 15,
+    paddingHorizontal: 20,
   },
   logoContainer: {
     flexDirection: 'row',
@@ -64,10 +66,11 @@ const styles = StyleSheet.create({
   logoImage: {
     width: 64,
     height: 64,
+    borderRadius: 20,
   },
   logoText: {
     color: '#ff1e1e',
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: '900',
     letterSpacing: 3,
     textTransform: 'uppercase',
