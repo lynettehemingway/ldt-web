@@ -1,9 +1,11 @@
 import React from 'react';
 import { Image, ScrollView, StyleSheet, Text } from 'react-native';
+import Header from '../../components/Header';
 
 export default function About() {
   return (
     <ScrollView style={styles.container}>
+      <Header />
       <Text style={styles.title}>About Us</Text>
       <Text style={styles.subtitle}>
         Preserving heritage. Performing with heart. Inspiring through rhythm.

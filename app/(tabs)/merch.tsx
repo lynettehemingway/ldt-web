@@ -1,7 +1,9 @@
 import React from 'react';
 import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import Header from '../../components/Header';
 
 export default function Merch() {
+  <Header />
   const products = [
     {
       id: 1,
