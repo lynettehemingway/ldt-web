@@ -15,7 +15,7 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a0a' },
+  container: { flex: 1, backgroundColor: '#0a0a0a', padding: 24},
   hero: { padding: 48, alignItems: 'center', justifyContent: 'center' },
   heroText: {
     color: '#ff1e1e',
