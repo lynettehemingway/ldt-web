@@ -5,9 +5,9 @@ import Header from '../../components/Header';
 export default function Media() {
   return (
     <ScrollView style={styles.container}>
+      <Header />
       <Text style={styles.title}>Media Gallery</Text>
       <Text style={styles.subtitle}>Capturing the rhythm and power of tradition.</Text>
-      <Header />
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Photos</Text>
         <View style={styles.grid}>

@@ -3,7 +3,6 @@ import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'rea
 import Header from '../../components/Header';
 
 export default function Merch() {
-  <Header />
   const products = [
     {
       id: 1,
@@ -27,6 +26,7 @@ export default function Merch() {
 
   return (
     <ScrollView style={styles.container}>
+      <Header />
       <Text style={styles.title}>Merch</Text>
       <Text style={styles.subtitle}>Shop team gear and support our lion dance crew.</Text>
 
