@@ -1,35 +1,37 @@
-import Link from 'expo-router/link';
+import { Link, usePathname } from 'expo-router';
 import React from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+
+function NavItem({ href, label }: { href: string; label: string }) {
+  const pathname = usePathname();
+  const isActive = pathname === href;
+
+  return (
+    <Link href={href} asChild>
+      <TouchableOpacity accessibilityRole="link">
+        <Text style={[styles.navLink, isActive && styles.activeLink]}>{label}</Text>
+      </TouchableOpacity>
+    </Link>
+  );
+}
 
 export default function HomeScreen() {
   return (
-    <ScrollView style={styles.container}>
-      {/* Navbar */}
+    <SafeAreaView style={styles.container}>
       <View style={styles.navbar}>
-        <Link href={'/about' as any} asChild>
-          <TouchableOpacity>
-            <Text style={styles.navLink}>About</Text>
-          </TouchableOpacity>
-        </Link>
-        <Link href={'/media' as any} asChild>
-          <TouchableOpacity>
-            <Text style={styles.navLink}>Media</Text>
-          </TouchableOpacity>
-        </Link>
-        <Link href={'/merch' as any} asChild>
-          <TouchableOpacity>
-            <Text style={styles.navLink}>Merch</Text>
-          </TouchableOpacity>
-        </Link>
+        <NavItem href="/about" label="About" />
+        <NavItem href="/media" label="Media" />
+        <NavItem href="/merch" label="Merch" />
       </View>
 
-      {/* Hero Section */}
-      <View style={styles.hero}>
-        <Text style={styles.heroText}>Lion Dance Team</Text>
-        <Text style={styles.subText}>Tradition in motion. Power in rhythm.</Text>
-      </View>
-    </ScrollView>
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        <View style={styles.hero}>
+          <Text style={styles.heroText}>Lion Dance Team</Text>
+          <Text style={styles.subText}>Tradition in motion. Power in rhythm.</Text>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
@@ -45,6 +47,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#222',
     backgroundColor: '#0a0a0a',
+    zIndex: 10,
   },
   navLink: {
     color: '#ffffff',
@@ -52,6 +55,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textTransform: 'uppercase',
     letterSpacing: 1,
+  },
+  activeLink: {
+    color: '#ff1e1e',
+    textDecorationLine: 'underline',
+  },
+  scrollContent: {
+    paddingTop: 24, 
   },
   hero: {
     padding: 48,
