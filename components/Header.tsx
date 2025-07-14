@@ -19,6 +19,11 @@ export default function Header() {
 
       {/* Navigation Links */}
       <View style={styles.linksContainer}>
+        <Link href={'/index' as any} asChild>
+          <TouchableOpacity>
+            <Text style={styles.navLink}>Home</Text>
+          </TouchableOpacity>
+        </Link>
         <Link href={'/about' as any} asChild>
           <TouchableOpacity>
             <Text style={styles.navLink}>About</Text>
@@ -44,8 +49,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: 32,
-    paddingHorizontal: 40,
+    paddingVertical: 16,
+    paddingHorizontal: 24,
     borderBottomWidth: 1,
     borderBottomColor: '#222',
     backgroundColor: '#0a0a0a',
@@ -56,31 +61,31 @@ const styles = StyleSheet.create({
   logoContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 20,
+    gap: 12,
   },
   logoImage: {
-    width: 100,
-    height: 100,
+    width: 64,
+    height: 64,
   },
   logoText: {
     color: '#ff1e1e',
-    fontSize: 32,
+    fontSize: 24,
     fontWeight: '900',
-    letterSpacing: 4,
+    letterSpacing: 3,
     textTransform: 'uppercase',
     textShadowColor: '#111',
-    textShadowOffset: { width: 2, height: 2 },
-    textShadowRadius: 3,
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
   },
   linksContainer: {
     flexDirection: 'row',
-    gap: 48,
+    gap: 32,
   },
   navLink: {
     color: '#ffffff',
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: 'bold',
     textTransform: 'uppercase',
-    letterSpacing: 1.5,
+    letterSpacing: 1,
   },
 });
