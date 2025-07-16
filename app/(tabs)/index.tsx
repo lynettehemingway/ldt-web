@@ -1,5 +1,6 @@
 // app/(tabs)/index.tsx
 import { ResizeMode, Video } from 'expo-av';
+import Link from 'expo-router/link';
 import React, { useEffect, useRef } from 'react';
 import {
   Dimensions,
@@ -7,9 +8,12 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
 } from 'react-native';
 import Header from '../../components/Header';
+
+const glowColor = '#ff1e1e';
 
 export default function HomeScreen() {
   const videoRef = useRef<Video>(null);
@@ -21,7 +25,7 @@ export default function HomeScreen() {
   const screenWidth = Dimensions.get('window').width;
   const videoWidth = screenWidth * 0.8;
   const videoHeight = (videoWidth * 9) / 16;
-  const sideWidth = screenWidth * 0.1;  // 10% of screen for side labels
+  const sideWidth = screenWidth * 0.1; // 10% of screen for side labels
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -36,7 +40,7 @@ export default function HomeScreen() {
               width: sideWidth,
               height: videoHeight,
               borderRightWidth: 4,
-              borderColor: '#ff1e1e',
+              borderColor: glowColor,
             },
           ]}
         >
@@ -44,6 +48,7 @@ export default function HomeScreen() {
             style={[
               styles.lang,
               styles.chinese,
+              styles.chineseGlow,
               styles.chineseSpacing,
             ]}
           >
@@ -93,7 +98,7 @@ export default function HomeScreen() {
               width: sideWidth,
               height: videoHeight,
               borderLeftWidth: 4,
-              borderColor: '#ff1e1e',
+              borderColor: glowColor,
             },
           ]}
         >
@@ -101,12 +106,26 @@ export default function HomeScreen() {
             style={[
               styles.lang,
               styles.vietnamese,
+              styles.vietnameseGlow,
               styles.vietnameseSpacing,
             ]}
           >
             Múa{'\n'}lân
           </Text>
         </View>
+      </View>
+
+      <View style={styles.socialsContainer}>
+        <Link href={'https://www.instagram.com/uf.ldt/' as any} asChild>
+          <TouchableOpacity>
+            <Text style={styles.socialsText}>Instagram</Text>
+          </TouchableOpacity>
+        </Link>
+        <Link href={'https://discord.gg/zKkVwQqaFj' as any} asChild>
+          <TouchableOpacity>
+            <Text style={styles.socialsText}>Discord</Text>
+          </TouchableOpacity>
+        </Link>
       </View>
     </ScrollView>
   );
@@ -128,30 +147,54 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   lang: {
-    color: '#ff1e1e',
+    color: glowColor,
     textAlign: 'center',
   },
-  // Additional spacing for Chinese label
+  // Chinese base style
   chinese: {
-    fontFamily: 'ZCOOLKuaiLe',
+    fontFamily: 'ZCOOLXiaoWei',
     fontWeight: '600',
+    paddingLeft: 20,
   },
+  // glow for Chinese
+  chineseGlow: {
+    textShadowColor: glowColor,
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 16,
+  },
+  // Spacing for Chinese label
   chineseSpacing: {
     fontSize: 44,
     letterSpacing: 8,
-    lineHeight: 80,   // double the fontSize for extra gap
+    lineHeight: 80,
   },
-  // Additional spacing for Vietnamese label
+  // Vietnamese base style
   vietnamese: {
     fontFamily: 'BeVietnam',
     fontWeight: '600',
+    paddingRight: 20,
   },
+  // glow for Vietnamese
+  vietnameseGlow: {
+    textShadowColor: glowColor,
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 16,
+  },
+  // Spacing for Vietnamese label
   vietnameseSpacing: {
     fontSize: 28,
     letterSpacing: 2,
-    lineHeight: 56,   // double the fontSize for extra gap
+    lineHeight: 56,
   },
   videoWrapper: {
     marginHorizontal: 16,
+  },
+  socialsContainer: {
+    flexDirection: 'row',
+    gap: 32,
+    padding: 24,
+  },
+  socialsText: {
+    color: '#fff',
   },
 });
