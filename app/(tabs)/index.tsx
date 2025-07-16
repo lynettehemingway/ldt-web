@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import Header from '../../components/Header';
 
-const glowColor = '#ff1e1e';
+const glowColor = '#6F00FF';
 
 export default function HomeScreen() {
   const videoRef = useRef<Video>(null);

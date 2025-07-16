@@ -13,7 +13,7 @@ import {
   View
 } from 'react-native';
 
-const glowColor = '#ff1e1e';
+const glowColor = '#6F00FF';
 const PADDING_HORIZONTAL = 25 * 2; // left + right from navbar
 
 export default function Header() {
