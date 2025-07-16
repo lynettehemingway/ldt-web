@@ -5,6 +5,7 @@ import React, { useState } from 'react';
 import {
   Image,
   LayoutChangeEvent,
+  Platform,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -68,7 +69,7 @@ export default function Header() {
             onLayout={onLogoLayout}
           >
             <Image
-              source={require('../assets/images/ufldtlogowhite2.png')}
+              source={require('../assets/images/logo.png')}
               style={styles.logoImage}
               resizeMode="contain"
             />
@@ -134,6 +135,17 @@ const styles = StyleSheet.create({
     width: 64,
     height: 64,
     borderRadius: 20,
+    ...Platform.select({
+      web: { filter: `drop-shadow(0 0 8px ${'white'})` },
+      ios: {
+        shadowColor: 'white',
+        shadowOffset: { width: 0, height: 0 },
+        shadowOpacity: 1,
+        shadowRadius: 8,
+      },
+      android: { elevation: 8 },
+    }),
+    padding: 0,
   },
   logoText: {
     color: glowColor,

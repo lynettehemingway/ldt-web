@@ -135,6 +135,7 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: '#0a0a0a',
     paddingBottom: 24,
+    paddingHorizontal: 24,
   },
   videoContainer: {
     flexDirection: 'row',
