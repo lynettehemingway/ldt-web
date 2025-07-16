@@ -110,7 +110,7 @@ export default function HomeScreen() {
               styles.vietnameseVertical,
             ]}
           >
-            {'M\nú\na\n\nl\nâ\nn'}
+            {'M\nú\na\n\nL\nâ\nn'}
           </Text>
         </View>
       </View>
