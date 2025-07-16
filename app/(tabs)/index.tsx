@@ -107,21 +107,21 @@ export default function HomeScreen() {
               styles.lang,
               styles.vietnamese,
               styles.vietnameseGlow,
-              styles.vietnameseSpacing,
+              styles.vietnameseVertical,
             ]}
           >
-            Múa{'\n'}lân
+            {'M\nú\na\n\nl\nâ\nn'}
           </Text>
         </View>
       </View>
 
       <View style={styles.socialsContainer}>
-        <Link href={'https://www.instagram.com/uf.ldt/' as any} asChild>
+        <Link href="https://www.instagram.com/uf.ldt/" asChild>
           <TouchableOpacity>
             <Text style={styles.socialsText}>Instagram</Text>
           </TouchableOpacity>
         </Link>
-        <Link href={'https://discord.gg/zKkVwQqaFj' as any} asChild>
+        <Link href="https://discord.gg/zKkVwQqaFj" asChild>
           <TouchableOpacity>
             <Text style={styles.socialsText}>Discord</Text>
           </TouchableOpacity>
@@ -181,11 +181,11 @@ const styles = StyleSheet.create({
     textShadowOffset: { width: 0, height: 0 },
     textShadowRadius: 16,
   },
-  // Spacing for Vietnamese label
-  vietnameseSpacing: {
+  // Vertical layout for Vietnamese label
+  vietnameseVertical: {
     fontSize: 28,
-    letterSpacing: 2,
-    lineHeight: 56,
+    letterSpacing: 0,
+    lineHeight: 40,
   },
   videoWrapper: {
     marginHorizontal: 16,
@@ -197,5 +197,7 @@ const styles = StyleSheet.create({
   },
   socialsText: {
     color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
