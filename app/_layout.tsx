@@ -10,7 +10,7 @@ export default function RootLayout() {
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-    ZCOOLKuaiLe: require('../assets/fonts/ZCOOLKuaiLe-Regular.ttf'),
+    ZCOOLKuaiLe: require('../assets/fonts/ZCOOLXiaoWei-Regular.ttf'),
     BeVietnam: require('../assets/fonts/BeVietnamPro-Medium.ttf'),
   });
 
