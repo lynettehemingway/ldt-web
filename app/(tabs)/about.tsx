@@ -40,11 +40,12 @@ const styles = StyleSheet.create({
     paddingTop: 0,
   },
   title: {
-    fontSize: 32,
+    fontSize: 50,
     color: '#6F00FF',
     fontWeight: '900',
     textAlign: 'center',
     marginBottom: 8,
+    marginTop: 15,
     textTransform: 'uppercase',
     letterSpacing: -1,
   },
