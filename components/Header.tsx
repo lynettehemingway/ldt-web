@@ -73,7 +73,7 @@ export default function Header() {
               style={styles.logoImage}
               resizeMode="contain"
             />
-            <Text style={styles.logoText}>UF LION DANCE TEAM</Text>
+            <Text style={styles.logoText}>LION DANCE TEAM AT UF</Text>
           </TouchableOpacity>
         </Link>
 
@@ -136,7 +136,7 @@ const styles = StyleSheet.create({
     height: 64,
     borderRadius: 20,
     ...Platform.select({
-      web: { filter: `drop-shadow(0 0 8px ${'white'})` },
+      web: { filter: `drop-shadow(0 0 0px ${'white'})` },
       ios: {
         shadowColor: 'white',
         shadowOffset: { width: 0, height: 0 },
@@ -149,7 +149,7 @@ const styles = StyleSheet.create({
   },
   logoText: {
     color: glowColor,
-    fontSize: 28,
+    fontSize: 40,
     fontWeight: '900',
     letterSpacing: 3,
     textTransform: 'uppercase',
