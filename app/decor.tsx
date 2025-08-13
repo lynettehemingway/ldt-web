@@ -1,9 +1,17 @@
 import React from "react";
-import { Image, StyleSheet, Text, View } from "react-native";
+import {
+  Image,
+  ImageStyle,
+  StyleProp,
+  StyleSheet,
+  Text,
+  View,
+  ViewStyle,
+} from "react-native";
 
-export function SideTag() {
+export function SideTag({ style }: { style?: StyleProp<ViewStyle> }) {
   return (
-    <View style={styles.sideTag}>
+    <View style={[styles.sideTag, style]} pointerEvents="none">
       <Text style={styles.arrow}>◄</Text>
       <Text style={styles.sideText}>múa lân</Text>
       <Text style={styles.arrow}>►</Text>
@@ -12,11 +20,11 @@ export function SideTag() {
 }
 
 /** Lantern image (right side of hero) */
-export function Lantern() {
+export function Lantern({ style }: { style?: StyleProp<ImageStyle> }) {
   return (
     <Image
       source={require("../assets/images/lantern.png")}
-      style={styles.lanternImg}
+      style={[styles.lanternImg, style]}
       resizeMode="contain"
       accessible
       accessibilityLabel="Lantern"
@@ -25,11 +33,11 @@ export function Lantern() {
 }
 
 /** Small star/spark accent */
-export function Star() {
+export function Star({ style }: { style?: StyleProp<ImageStyle> }) {
   return (
     <Image
       source={require("../assets/images/star.png")}
-      style={styles.starImg}
+      style={[styles.starImg, style]}
       resizeMode="contain"
       accessible
       accessibilityLabel="Decorative star"
@@ -46,11 +54,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 6,
+    zIndex: 3,
   },
   sideText: { fontWeight: "800", fontSize: 14, color: "#000", letterSpacing: 1 },
   arrow: { fontSize: 14, color: "#000" },
 
-  // sorry alice i have no idea how to put the icons in yet
-  lanternImg: { width: 40, height: 64 }, 
+  lanternImg: { width: 40, height: 64 },
   starImg: { width: 24, height: 24 },
 });
