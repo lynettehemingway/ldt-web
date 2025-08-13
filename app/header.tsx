@@ -10,6 +10,7 @@ import {
   View,
   useWindowDimensions,
 } from "react-native";
+import { Lantern } from "../app/decor";
 
 const NAV = [
   { label: "HOME", href: "/" },
@@ -22,18 +23,19 @@ export const HEADER_H = 90;
 const PAPER = "#f6f1ea";
 const ACCENT = "#d9cdbb";
 const PURPLE = "#6f00ff";
-const BREAKPOINT = 900; // width in px where we swap to hamburger
+const BREAKPOINT = 900; // width where we switch to hamburger
 
 export default function Header() {
   const pathname = usePathname();
-  const [fontLoaded, setFontLoaded] = useState(false);
   const { width } = useWindowDimensions();
+  const [fontLoaded, setFontLoaded] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     Font.loadAsync({
       "CaveatBrush-Regular": {
-        uri: "https://fonts.gstatic.com/s/caveatbrush/v17/EYq0maZfwr9S9-ETZc3fKXt8Qn3D_Q.woff2",
+        uri:
+          "https://fonts.gstatic.com/s/caveatbrush/v17/EYq0maZfwr9S9-ETZc3fKXt8Qn3D_Q.woff2",
         display: Font.FontDisplay.SWAP,
       },
     }).then(() => setFontLoaded(true));
@@ -42,12 +44,19 @@ export default function Header() {
   const isHome = pathname === "/" || pathname === "/index";
   const isMobile = width < BREAKPOINT;
 
+  // --- Lantern sizing/placement attached to header bottom ---
+  const LAN_W = clamp(width * 0.09, 44, 96);
+  const LAN_H = Math.round(LAN_W * (64 / 40)); // preserves image aspect
+  const LAN_RIGHT = clamp(width * 0.015, 8, 24);
+  const LAN_OVERHANG = Math.round(LAN_H * 0.60); // how far it hangs below the header
+  // ----------------------------------------------------------
+
   return (
     <View style={styles.fixed}>
       <View style={styles.bar}>
         {/* left logo + title */}
         <Link href="/" asChild>
-          <Pressable style={styles.logoWrap}>
+          <Pressable style={styles.logoWrap} onPress={() => setMenuOpen(false)}>
             <Image source={require("../assets/images/logo.png")} style={styles.logo} />
             <View>
               <Text
@@ -69,8 +78,8 @@ export default function Header() {
           </Pressable>
         </Link>
 
-        {/* right side */}
-        {!isMobile && (
+        {/* right: links OR hamburger */}
+        {!isMobile ? (
           <View style={styles.links}>
             {NAV.map((n) => {
               const active = (n.href === "/" && isHome) || pathname === n.href;
@@ -83,33 +92,53 @@ export default function Header() {
               );
             })}
           </View>
-        )}
-
-        {isMobile && (
-          <Pressable onPress={() => setMenuOpen((prev) => !prev)} style={styles.burger}>
+        ) : (
+          <Pressable onPress={() => setMenuOpen((v) => !v)} style={styles.burger}>
             <Text style={styles.burgerIcon}>☰</Text>
           </Pressable>
         )}
       </View>
+
       <View style={styles.rule} />
 
-      {/* Mobile dropdown */}
+      {/* Mobile dropdown (below the rule) */}
       {isMobile && menuOpen && (
         <View style={styles.mobileMenu}>
           {NAV.map((n) => {
             const active = (n.href === "/" && isHome) || pathname === n.href;
             return (
               <Link key={n.href} href={n.href as any} asChild>
-                <Pressable onPress={() => setMenuOpen(false)} style={styles.mobileLinkWrap}>
-                  <Text style={[styles.mobileLink, active && styles.linkActive]}>{n.label}</Text>
+                <Pressable
+                  onPress={() => setMenuOpen(false)}
+                  style={styles.mobileLinkWrap}
+                >
+                  <Text style={[styles.mobileLink, active && styles.linkActive]}>
+                    {n.label}
+                  </Text>
                 </Pressable>
               </Link>
             );
           })}
         </View>
       )}
+
+      {/* Lantern hangs from header bottom — IMPORTANT: use only bottom, NOT top */}
+      <Lantern
+        style={{
+          position: "absolute",
+          right: LAN_RIGHT,
+          bottom: -LAN_OVERHANG - 54, // negative => hangs below the header bottom
+          width: LAN_W,
+          height: LAN_H,
+          zIndex: 1001,
+        }}
+      />
     </View>
   );
+}
+
+function clamp(v: number, lo: number, hi: number) {
+  return Math.max(lo, Math.min(v, hi));
 }
 
 const styles = StyleSheet.create({
@@ -120,6 +149,8 @@ const styles = StyleSheet.create({
     right: 0,
     zIndex: 1000,
     backgroundColor: PAPER,
+    // allow the lantern to hang outside
+    overflow: "visible",
   },
   bar: {
     height: HEADER_H,
@@ -139,15 +170,18 @@ const styles = StyleSheet.create({
   link: { fontWeight: "500", fontSize: 18, letterSpacing: 1, color: "#000" },
   linkActive: { color: PURPLE },
   rule: { height: 2, backgroundColor: ACCENT, width: "100%" },
-  burger: { padding: 8 },
-  burgerIcon: { fontSize: 28, fontWeight: "bold", color: "#000" },
 
+  // hamburger
+  burger: { padding: 10 },
+  burgerIcon: { fontSize: 26, fontWeight: "900", color: "#000", lineHeight: 26 },
+
+  // mobile dropdown
   mobileMenu: {
     backgroundColor: PAPER,
     borderTopWidth: 1,
     borderTopColor: ACCENT,
-    paddingVertical: 10,
+    paddingVertical: 8,
   },
-  mobileLinkWrap: { paddingVertical: 8, paddingHorizontal: 24 },
-  mobileLink: { fontSize: 18, color: "#000", fontWeight: "600" },
+  mobileLinkWrap: { paddingVertical: 10, paddingHorizontal: 24 },
+  mobileLink: { fontSize: 18, color: "#000", fontWeight: "700" },
 });
