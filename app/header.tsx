@@ -123,16 +123,19 @@ export default function Header() {
       )}
 
       {/* Lantern hangs from header bottom — IMPORTANT: use only bottom, NOT top */}
-      <Lantern
-        style={{
-          position: "absolute",
-          right: LAN_RIGHT,
-          bottom: -LAN_OVERHANG - 54, // negative => hangs below the header bottom
-          width: LAN_W,
-          height: LAN_H,
-          zIndex: 1001,
-        }}
-      />
+      {(pathname === "/" || pathname === "/index") && (
+        <Lantern
+          style={{
+            position: "absolute",
+            right: LAN_RIGHT,
+            bottom: -LAN_OVERHANG - 54,
+            width: LAN_W,
+            height: LAN_H,
+            zIndex: 1001,
+          }}
+        />
+      )}
+
     </View>
   );
 }
