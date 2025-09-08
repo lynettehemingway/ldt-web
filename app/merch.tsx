@@ -50,20 +50,11 @@ const CATEGORIES: Option[] = [
 const PRODUCTS: Product[] = [
   {
     id: "tee-purple",
-    name: "Blah",
+    name: "Coming Soon",
     price: 25,
     category: "tees",
     description: "blahblah",
     image: "https://images.unsplash.com/photo-1520975916090-3105956dac38?q=80&w=1200&auto=format&fit=crop",
-    link: "https://instagram.com/ldt",
-  },
-  {
-    id: "hoodie-black",
-    name: "Blah hoodie",
-    price: 45,
-    category: "hoodies",
-    description: "blahblah",
-    image: "https://images.unsplash.com/photo-1539533113208-f6df8cc8b543?q=80&w=1200&auto=format&fit=crop",
     link: "https://instagram.com/ldt",
   },
 ];
