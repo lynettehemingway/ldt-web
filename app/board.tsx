@@ -526,13 +526,12 @@ function MemberCard({ member, cardWidth }: { member: Member; cardWidth: number }
           )}
         </View>
 
-        {/* NEW: spacer that takes all leftover room */}
+
         <View style={styles.flexSpacer} />
 
         {/* Socials pinned at bottom */}
         <View style={styles.socialRow}>
           {member.socials?.instagram && <Chip label="Instagram" href={member.socials.instagram} />}
-          {member.socials?.linkedin && <Chip label="LinkedIn" href={member.socials.linkedin} />}
           {member.socials?.website && <Chip label="Website" href={member.socials.website} />}
         </View>
       </View>
@@ -659,7 +658,7 @@ const styles = StyleSheet.create({
   chipText: { color: INK, fontWeight: "700", fontSize: 12, letterSpacing: 0.2 },
 
   detailsBlock: {
-    gap: 2,            // tight vertical rhythm
+    gap: 2,           
     minHeight: 56
 },
 
@@ -672,11 +671,10 @@ const styles = StyleSheet.create({
 },
 
   detailLabel: {
-    fontWeight: "800", // bold label for scannability
+    fontWeight: "800",
     letterSpacing: 0.2,
 },
 
-  // SideTag (if you add one later)
   sideTagOverride: {
     position: "absolute",
     left: -48,
