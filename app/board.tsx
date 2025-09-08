@@ -1,16 +1,16 @@
 // app/board.tsx
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
-    Animated,
-    Easing,
-    Image,
-    Platform,
-    Pressable,
-    SectionList,
-    StyleSheet,
-    Text,
-    View,
-    useWindowDimensions,
+  Animated,
+  Easing,
+  Image,
+  Platform,
+  Pressable,
+  SectionList,
+  StyleSheet,
+  Text,
+  View,
+  useWindowDimensions,
 } from "react-native";
 import Svg, { Path } from "react-native-svg";
 import Header, { HEADER_H } from "../app/header";
@@ -44,7 +44,10 @@ const PHOTOS = {
     main: require("../assets/images/board/prof/alice.jpg"),
     alt: require("../assets/images/board/shoot/alicephotoshoot.png"),
   },
-  // webmaster2: { main: require("../assets/images/board/prof/lynette.jpg"), alt: require("../assets/images/board/shoot/lynphotoshoot.png") },
+  webmaster2: { 
+    main: require("../assets/images/board/prof/lynette.jpg"), 
+    alt: require("../assets/images/board/shoot/lynphotoshoot.png") 
+  },
   showDirector1: {
     main: require("../assets/images/board/prof/han.jpg"),
     alt: require("../assets/images/board/shoot/hanphotoshoot.png"),
@@ -263,7 +266,7 @@ export default function Board() {
     () => [
       { title: "Executive Board", data: chunk(EXEC, numColumns) },
       {
-        title: "Directors",
+        title: "Chair Board",
         data: [...chunk(SHOW_DIRECTORS, numColumns), ...chunk(WEBMASTERS, numColumns)],
       },
     ],
