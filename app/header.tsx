@@ -171,7 +171,7 @@ const styles = StyleSheet.create({
   },
   logoWrap: { flexDirection: "row", alignItems: "center", gap: 12 },
   logo: { width: 70, height: 70, resizeMode: "contain" },
-  title: { fontSize: 28, color: "#000", lineHeight: 30, fontWeight: "900" },
+  title: { fontSize: 28, color: "#000", lineHeight: 30, fontWeight: "900", fontFamily: BRAND_SERIF},
   subtitle: { fontSize: 14, color: "#000" },
   links: { flexDirection: "row", gap: 36, alignItems: "center" },
   link: { fontWeight: "500", fontSize: 18, letterSpacing: 1, color: "#000" },
