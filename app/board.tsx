@@ -73,26 +73,50 @@ type Member = {
   name: string;
   role: string;
   socials?: Socials;
+  details?: {
+    major?: string;
+    year?: string;
+    pronouns?: string;
+  }
 };
 
 // --- Board roster (exec vs directors)
 const EXEC: Member[] = [
-  { id: "president", name: "Steven Tran", role: "President" },
-  { id: "vp", name: "Colin Liang", role: "Vice President" },
-  { id: "treasurer", name: "Kelvin Nguyen", role: "Treasurer" },
+  { id: "president", name: "Steven Tran", role: "President", 
+    socials: { instagram: "https://www.instagram.com/stevendangkhoi/" },  
+    details: { major: "Digital Arts & Sciences, Minor in Media Production, Management & Technology", year: "3rd", pronouns: "he/him" } },
+  { id: "vp", name: "Colin Liang", role: "Vice President",
+    socials: { instagram: "https://www.instagram.com/_jhapu/" },
+    details: { major: "Chemistry, Pre-Med Track", year: "2nd", pronouns: "he/him" }
+   },
+  { id: "treasurer", name: "Kelvin Nguyen", role: "Treasurer",
+    socials: { instagram: "https://www.instagram.com/kelvin.saito/" },
+    details: { major: "Finance, Minor in Spanish, Pre-Law Track", year: "2nd", pronouns: "he/him" }
+   },
 ];
 
 const DIRECTORS: Member[] = [
   {
-    id: "webmaster1",
-    name: "Alice Jiang",
-    role: "Webmaster",
-    socials: { instagram: "https://instagram.com/your_handle" },
+    id: "webmaster1",name: "Alice Jiang", role: "Webmaster",
+    socials: { instagram: "https://instagram.com/alicezzjiang" },
+    details: { major: "Computer Science, Minor in Business Administration, Pre-Law Track", year: "3rd", pronouns: "she/her" }
   },
-  { id: "webmaster2", name: "Lynette Hemingway", role: "Webmaster" },
-  { id: "showDirector1", name: "Han Nguyen", role: "Show Director" },
-  { id: "showDirector2", name: "Matt Baterna", role: "Show Director" },
-  { id: "showDirector3", name: "Kayla Le", role: "Show Director" },
+  { id: "webmaster2", name: "Lynette Hemingway", role: "Webmaster",
+    socials: { instagram: "https://www.instagram.com/lynette_hemingway/" },
+    details: { major: "Computer Science, Minor in Digital Arts & Sciencces, GIS Certificate", year: "3rd", pronouns: "she/her" }
+   },
+  { id: "showDirector1", name: "Han Nguyen", role: "Show Director",
+    socials: { instagram: "https://www.instagram.com/hantheburgher/" },
+    details: { major: "Food & Resource Economics", year: "2nd Year", pronouns: "he/him" }
+   },
+  { id: "showDirector2", name: "Matt Baterna", role: "Show Director",
+    socials: { instagram: "https://www.instagram.com/amattforbats/" },
+    details: { major: "Exercise & Sports Science, Pre-Physical Therapy Track", year: "2nd", pronouns: "he/him" }
+   },
+  { id: "showDirector3", name: "Kayla Le", role: "Show Director",
+    socials: { instagram: "https://www.instagram.com/k.la_009/" },
+    details: { major: "Accounting", year: "2nd Year", pronouns: "she/her" }
+   },
 ];
 
 // ---------- Utils ----------
@@ -430,6 +454,7 @@ export default function Board() {
               justifyContent: "space-between",
               gap: gutter,
               marginBottom: gutter,
+              alignItems: "stretch"
             }}
           >
             {row.map((member) => (
@@ -452,12 +477,15 @@ function MemberCard({ member, cardWidth }: { member: Member; cardWidth: number }
 
   const source = fallbackSrc ?? (useAlt ? altSrc : mainSrc);
 
+  // Keep a descriptive a11y label (ok to keep concise)
+  const a11y = `${member.name} — ${member.role}`;
+
   return (
     <View style={[styles.card, { width: cardWidth }]}>
       <Pressable
         onPress={() => setUseAlt((v) => !v)} // tap/click toggle
-        onHoverIn={() => setUseAlt(true)} // hover in (web)
-        onHoverOut={() => setUseAlt(false)} // hover out (web)
+        onHoverIn={() => setUseAlt(true)}    // hover in (web)
+        onHoverOut={() => setUseAlt(false)}  // hover out (web)
       >
         <View style={styles.photoWrap}>
           <Image
@@ -465,7 +493,7 @@ function MemberCard({ member, cardWidth }: { member: Member; cardWidth: number }
             style={styles.photo}
             onError={() => setFallbackSrc(require("../assets/images/lions.png"))}
             accessible
-            accessibilityLabel={`${member.name} — ${member.role}`}
+            accessibilityLabel={a11y}
           />
           <View style={styles.rolePill}>
             <Text style={styles.rolePillText}>{member.role}</Text>
@@ -474,7 +502,32 @@ function MemberCard({ member, cardWidth }: { member: Member; cardWidth: number }
       </Pressable>
 
       <View style={styles.meta}>
-        <Text style={styles.name}>{member.name}</Text>
+        <Text style={styles.name} numberOfLines={1} ellipsizeMode="tail">
+          {member.name}
+        </Text>
+
+        {/* Stacked details block */}
+        <View style={styles.detailsBlock}>
+          {member.details?.major && (
+            <Text style={styles.detailText} numberOfLines={2} ellipsizeMode="tail">
+              <Text style={styles.detailLabel}>Major: </Text>
+              {member.details.major}
+            </Text>
+          )}
+          {member.details?.year && (
+            <Text style={styles.detailText} numberOfLines={2} ellipsizeMode="tail">
+              <Text style={styles.detailLabel}>Year: </Text>
+              {member.details.year}
+            </Text>
+          )}
+          {member.details?.pronouns && (
+            <Text style={styles.detailText} numberOfLines={2} ellipsizeMode="tail">
+              <Text style={styles.detailLabel}>Pronouns: </Text>
+              {member.details.pronouns}
+            </Text>
+          )}
+        </View>
+
         <View style={styles.socialRow}>
           {member.socials?.instagram && <Chip label="Instagram" href={member.socials.instagram} />}
           {member.socials?.linkedin && <Chip label="LinkedIn" href={member.socials.linkedin} />}
@@ -484,6 +537,7 @@ function MemberCard({ member, cardWidth }: { member: Member; cardWidth: number }
     </View>
   );
 }
+
 
 function Chip({ label, href }: { label: string; href: string }) {
   return (
@@ -573,6 +627,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     borderWidth: 2,
     borderColor: ACCENT,
+    flex: 1
   },
   photoWrap: {
     position: "relative",
@@ -592,12 +647,29 @@ const styles = StyleSheet.create({
   },
   rolePillText: { color: "#fff", fontWeight: "900", letterSpacing: 0.5, fontSize: 12 },
 
-  meta: { padding: 12, gap: 8 },
+  meta: { padding: 12, gap: 8, justifyContent: "space-between", flex: 1 },
   name: { color: INK, fontWeight: "900", fontSize: 18, letterSpacing: 0.3 },
 
-  socialRow: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
+  socialRow: { flexDirection: "row", flexWrap: "wrap", gap: 8, },
   chip: { backgroundColor: PAPER, paddingHorizontal: 12, paddingVertical: 8, borderRadius: 999, borderWidth: 2 },
   chipText: { color: INK, fontWeight: "700", fontSize: 12, letterSpacing: 0.2 },
+
+  detailsBlock: {
+    gap: 2,            // tight vertical rhythm
+    minHeight: 56
+},
+
+  detailText: {
+    color: INK,
+    opacity: 0.8,
+    fontSize: 13,
+    lineHeight: 18,
+},
+
+  detailLabel: {
+    fontWeight: "800", // bold label for scannability
+    letterSpacing: 0.2,
+},
 
   // SideTag (if you add one later)
   sideTagOverride: {
