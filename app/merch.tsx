@@ -186,6 +186,19 @@ const s = StyleSheet.create({
 
   inputWrap: { borderWidth: 1, borderColor: ACCENT, borderRadius: 12, paddingHorizontal: 10, minWidth: 160, backgroundColor: "white" },
   inputValue: { color: INK, paddingVertical: 8 },
+  pageTitleWrap: {
+  paddingTop: 8,
+  paddingBottom: 8,
+},
+    pageTitle: {
+    color: "#6f00ff",
+    fontSize: 56,
+    lineHeight: 60,
+    fontWeight: "900",
+    letterSpacing: 0.5,
+    textTransform: "uppercase",
+    fontFamily: BRAND_SERIF,
+    },
 
   card: { backgroundColor: "#ffffff", borderRadius: 16, overflow: "hidden", borderWidth: 1, borderColor: ACCENT, elevation: 2 },
   cardImg: { width: "100%", height: 220 },
