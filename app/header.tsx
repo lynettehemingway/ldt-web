@@ -67,8 +67,7 @@ export default function Header() {
                 style={[
                   styles.title,
                   {
-                    fontFamily: fontLoaded
-                      ? "CaveatBrush-Regular"
+                    fontFamily
                       : BRAND_SERIF,
                   },
                 ]}
