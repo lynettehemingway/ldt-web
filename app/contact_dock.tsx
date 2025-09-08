@@ -333,8 +333,8 @@ export default function ContactDock() {
   const [showFeedback, setShowFeedback] = useState(false);
 
   // offset from edges (nudge left by increasing right)
-  const bottom = Math.max(16, insets.bottom + 12);
-  const right = Math.max(32, insets.right + 32);
+  const bottom = Math.max(16, insets.bottom + 32);
+  const right = Math.max(32, insets.right + 40);
 
   const content = useMemo(
     () => (
@@ -413,7 +413,7 @@ export default function ContactDock() {
             accessibilityHint={open ? "Collapse contact options" : "Expand contact options"}
             style={({ pressed }) => [styles.cornerButton, pressed && { transform: [{ scale: 0.98 }] }]}
           >
-            <Feather name={open ? "chevrons-right" : "message-square"} size={20} color={PAPER} />
+            <Feather name={open ? "chevrons-right" : "message-square"} size={24} color={PAPER} />
           </Pressable>
         </View>
 
@@ -452,8 +452,8 @@ const styles = StyleSheet.create({
   cornerWrap: { position: "absolute", alignItems: "flex-end" },
 
   cornerButton: {
-    width: 46,
-    height: 46,
+    width: 56,
+    height: 56,
     borderTopLeftRadius: 14,
     borderBottomRightRadius: 14,
     borderTopRightRadius: 14,
