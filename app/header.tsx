@@ -11,6 +11,10 @@ import {
   useWindowDimensions,
 } from "react-native";
 import { Lantern } from "../app/decor";
+const BRAND_SERIF =
+  Platform.OS === "web"
+    ? "'Merriweather', Georgia, serif"
+    : "Merriweather_900Black"; 
 
 const NAV = [
   { label: "HOME", href: "/" },
@@ -186,5 +190,5 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   mobileLinkWrap: { paddingVertical: 10, paddingHorizontal: 24 },
-  mobileLink: { fontSize: 18, color: "#000", fontWeight: "700" },
+  mobileLink: { fontSize: 18, color: "#000", fontWeight: "700", fontFamily: BRAND_SERIF },
 });

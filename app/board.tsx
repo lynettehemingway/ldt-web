@@ -52,7 +52,10 @@ const PHOTOS = {
     main: require("../assets/images/board/prof/han.jpg"),
     alt: require("../assets/images/board/shoot/hanphotoshoot.png"),
   },
-  // showDirector2: { main: require("../assets/images/board/prof/matt.jpg"), alt: require("../assets/images/board/shoot/mattphotoshoot.png") },
+  showDirector2: { 
+    main: require("../assets/images/board/prof/matt.jpg"), 
+    alt: require("../assets/images/board/shoot/mattphotoshoot.png") 
+  },
   showDirector3: {
     main: require("../assets/images/board/prof/kayla.jpg"),
     alt: require("../assets/images/board/shoot/kaylaphotoshoot.png"),

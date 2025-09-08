@@ -2,6 +2,7 @@ import React, { useMemo, useState } from "react";
 import {
     Image,
     Linking,
+    Platform,
     Pressable,
     SafeAreaView,
     ScrollView,
@@ -12,6 +13,11 @@ import {
     useWindowDimensions,
 } from "react-native";
 import Header from "../app/header";
+
+const BRAND_SERIF =
+  Platform.OS === "web"
+    ? "var(--brand-serif, Georgia, serif)" 
+    : "serif"; 
 
 const PAPER = "#f6f1ea";
 const INK = "#161616";
@@ -44,19 +50,19 @@ const CATEGORIES: Option[] = [
 const PRODUCTS: Product[] = [
   {
     id: "tee-purple",
-    name: "Purple Crest Tee",
+    name: "Blah",
     price: 25,
     category: "tees",
-    description: "Classic fit cotton tee in our team purple.",
+    description: "blahblah",
     image: "https://images.unsplash.com/photo-1520975916090-3105956dac38?q=80&w=1200&auto=format&fit=crop",
     link: "https://instagram.com/ldt",
   },
   {
     id: "hoodie-black",
-    name: "Blackout Hoodie",
+    name: "Blah hoodie",
     price: 45,
     category: "hoodies",
-    description: "Cozy hoodie with lion crest.",
+    description: "blahblah",
     image: "https://images.unsplash.com/photo-1539533113208-f6df8cc8b543?q=80&w=1200&auto=format&fit=crop",
     link: "https://instagram.com/ldt",
   },
@@ -140,7 +146,14 @@ function Grid({ columns = 2, gap = 12, children }: { columns?: number; gap?: num
 
 function Card({ product }: { product: Product }) {
   return (
-    <Pressable style={s.card} onPress={() => Linking.openURL(product.link)}>
+    <Pressable
+      onPress={() => Linking.openURL(product.link)}
+      style={({ hovered, pressed }) => [
+        s.card,
+        hovered && { transform: [{ translateY: -6 }], shadowOpacity: 0.15, shadowRadius: 8, elevation: 5 },
+        pressed && { transform: [{ scale: 0.98 }] },
+      ]}
+    >
       <Image source={{ uri: product.image }} resizeMode="cover" style={s.cardImg} />
       <View style={s.cardBody}>
         <Text style={s.cardTitle}>{product.name}</Text>
