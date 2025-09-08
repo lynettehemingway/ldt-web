@@ -69,9 +69,7 @@ export default function Header() {
                   {
                     fontFamily: fontLoaded
                       ? "CaveatBrush-Regular"
-                      : Platform.OS === "web"
-                      ? "cursive"
-                      : undefined,
+                      : BRAND_SERIF,
                   },
                 ]}
               >

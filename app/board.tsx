@@ -502,38 +502,41 @@ function MemberCard({ member, cardWidth }: { member: Member; cardWidth: number }
       </Pressable>
 
       <View style={styles.meta}>
-        <Text style={styles.name} numberOfLines={1} ellipsizeMode="tail">
-          {member.name}
-        </Text>
+        <Text style={styles.name}>{member.name}</Text>
 
-        {/* Stacked details block */}
+        {/* Stacked details */}
         <View style={styles.detailsBlock}>
           {member.details?.major && (
-            <Text style={styles.detailText} numberOfLines={2} ellipsizeMode="tail">
+            <Text style={styles.detailText}>
               <Text style={styles.detailLabel}>Major: </Text>
               {member.details.major}
             </Text>
           )}
           {member.details?.year && (
-            <Text style={styles.detailText} numberOfLines={2} ellipsizeMode="tail">
+            <Text style={styles.detailText}>
               <Text style={styles.detailLabel}>Year: </Text>
               {member.details.year}
             </Text>
           )}
           {member.details?.pronouns && (
-            <Text style={styles.detailText} numberOfLines={2} ellipsizeMode="tail">
+            <Text style={styles.detailText}>
               <Text style={styles.detailLabel}>Pronouns: </Text>
               {member.details.pronouns}
             </Text>
           )}
         </View>
 
+        {/* NEW: spacer that takes all leftover room */}
+        <View style={styles.flexSpacer} />
+
+        {/* Socials pinned at bottom */}
         <View style={styles.socialRow}>
           {member.socials?.instagram && <Chip label="Instagram" href={member.socials.instagram} />}
           {member.socials?.linkedin && <Chip label="LinkedIn" href={member.socials.linkedin} />}
           {member.socials?.website && <Chip label="Website" href={member.socials.website} />}
         </View>
       </View>
+
     </View>
   );
 }
@@ -647,7 +650,8 @@ const styles = StyleSheet.create({
   },
   rolePillText: { color: "#fff", fontWeight: "900", letterSpacing: 0.5, fontSize: 12 },
 
-  meta: { padding: 12, gap: 8, justifyContent: "space-between", flex: 1 },
+  meta: { padding: 12, gap: 8, flex: 1 },
+  flexSpacer: { flexGrow: 1 },
   name: { color: INK, fontWeight: "900", fontSize: 18, letterSpacing: 0.3 },
 
   socialRow: { flexDirection: "row", flexWrap: "wrap", gap: 8, },
@@ -664,6 +668,7 @@ const styles = StyleSheet.create({
     opacity: 0.8,
     fontSize: 13,
     lineHeight: 18,
+      ...(Platform.OS === "web" ? { wordBreak: "break-word" } : {}),
 },
 
   detailLabel: {
