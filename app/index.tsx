@@ -161,7 +161,11 @@ export default function Home() {
   const H1 = Math.round(rsize(winW, 48, 34, 64));     // h1 font size
   const H1_LH = Math.round(H1 * 1.08);
   const H1_THIN = Math.round(rsize(winW, 32, 22, 40));
-  const COPY_W = Math.round(rsize(winW, 360, 280, 460));
+  const COPY_W = isMobile
+    ? Math.round(rsize(winW, 380, 300, 480))      // phones: small bump
+    : isTablet
+    ? Math.round(rsize(winW, 520, 460, 640))      // tablet
+    : Math.round(rsize(winW, 620, 520, 760));     // desktop
   const CHEVRON_SIZE = Math.round(rsize(winW, 56, 42, 72)); // indicator height
 
   // Circle & lion scale with container
@@ -261,7 +265,7 @@ export default function Home() {
             style={[
               styles.rightCol,
               {
-                flex: isMobile ? undefined : 1,
+                flex: isMobile ? undefined : isTablet ? 1.2 : 1.35,
                 width: isMobile ? "100%" : undefined,
                 alignItems: isMobile ? "center" : "flex-start",
                 position: "relative", // for inline chevrons placement
@@ -305,8 +309,12 @@ export default function Home() {
                 },
               ]}
             >
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam
-              rhoncus in libero ut maximus.
+               Lion Dance Team (LDT) at the University of Florida is an organization open 
+               to students of all skill levels and backgrounds that aims to teach and promote 
+               the art of lion dancing. 
+               <p></p>We perform traditional and modern lion dance shows at UF, 
+               as well as in the greater Gainesville area, in order to entertain and spread this culture to the community. 
+               As a team, our goal is to foster artistic and individual growth in our dancers.
             </Text>
 
             <View style={styles.carouselHint}>

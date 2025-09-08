@@ -67,11 +67,8 @@ export default function Header() {
                 style={[
                   styles.title,
                   {
-                    fontFamily: fontLoaded
-                      ? "CaveatBrush-Regular"
-                      : Platform.OS === "web"
-                      ? "cursive"
-                      : undefined,
+                    fontFamily
+                      : BRAND_SERIF,
                   },
                 ]}
               >
