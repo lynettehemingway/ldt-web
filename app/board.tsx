@@ -419,7 +419,7 @@ export default function Board() {
                       { textAlign: isWideHero ? "left" : "center", fontSize: COPY_SIZE, lineHeight: COPY_LH },
                     ]}
                   >
-                    Lorem ipsum.
+                    Meet your 2025-2026 Board!
                   </Text>
 
                   {/* Chevrons-only indicator — clickable to scroll to grid */}

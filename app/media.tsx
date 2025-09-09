@@ -1,10 +1,7 @@
-// app/media.tsx
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
-  FlatList,
   Image,
-  ImageSourcePropType,
   Linking,
   Platform,
   Pressable,
@@ -23,248 +20,425 @@ const INK = "#161616";
 const ACCENT = "#d9cdbb";
 const PURPLE = "#6f00ff";
 
-/** ---- Local images (placeholders until GDrive hook-up) ---- */
-import one from "../assets/media/one.png";
-import two from "../assets/media/two.png";
+/** Collage spacing (set to 0 for seamless) */
+const COLLAGE_GAP = 4;
 
-/** Click-through destination */
-const DRIVE_FOLDER_URL =
-  "https://drive.google.com/drive/folders/1oM2-p7UQ6Vr1cPKIADcTY_GCMVsWNzGU";
-
-type Slide = { source: ImageSourcePropType; alt?: string };
-const SLIDES: Slide[] = [
-  { source: one, alt: "Gallery 1" },
-  { source: two, alt: "Gallery 2" },
+/** =========================================
+ *  Add galleries here (as many as you want)
+ *  ========================================= */
+const GALLERIES: {
+  title: string;
+  folderId: string;
+  slideIds?: string[];
+}[] = [
+  {
+    title: "LDT Workshop • 09/11/2025",
+    folderId: "1oM2-p7UQ6Vr1cPKIADcTY_GCMVsWNzGU",
+    slideIds: [
+      "1VHFR67WcItbqKgsBX-kBzJjpCshg7lZi", 
+      "1LJg_vebCXh9g0i8Dr4iWhXZhBZvRTPMt",
+      "1uqESPISNFMA_t-5L7ipXnW4W1Aoac4xu",
+      "1bjA7vGfbn80E2YldzJ1OcWGAaaXGnCsZ",
+      "1ePO4e5j22peSBJndd5fLkOTi55t1TA14",
+      "1SOA_UitxG2Vo2V9XPyc7fjIVqfzAm2D3",
+      "1tlGj065VUMN6HQ2qxA09IErTwe9ltZzF",
+      "1tlGj065VUMN6HQ2qxA09IErTwe9ltZzF",
+      "1hEUNpApBS5fQATcgQZgHHf881bWpLgxl",
+    ],
+  },
 ];
 
+/** URLs that work well for HEIC/JPG/PNG */
+const idToUrls = (id: string) => {
+  const bust = `t=${Date.now()}`; 
+  return {
+    primary: `https://drive.google.com/thumbnail?id=${id}&sz=w2400&${bust}`,
+    fallback: `https://lh3.googleusercontent.com/d/${id}=w2400?${bust}`,
+  };
+};
+
+type Slide = { uri: string; fallbackUri?: string };
+
 export default function MediaPage() {
-  const { height } = useWindowDimensions();
   const headerOffset = Platform.OS === "web" ? HEADER_H : 0;
-
-  const [loading, setLoading] = useState(true);
-  const [err, setErr] = useState<string | null>(null);
-
-  useEffect(() => {
-    const t = setTimeout(() => {
-      if (SLIDES.length === 0) setErr("Add one.png and two.png to assets/media.");
-      setLoading(false);
-    }, 120);
-    return () => clearTimeout(t);
-  }, []);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: PAPER }}>
       <Header />
       <ScrollView
         style={{ flex: 1 }}
-        contentContainerStyle={{ paddingTop: headerOffset, paddingBottom: 32 }}
+        contentContainerStyle={{ paddingTop: headerOffset, paddingBottom: 56 }}
         showsVerticalScrollIndicator
       >
-        <View style={[s.container, s.pageHeader]}>
-          <Text style={s.h1}>MEDIA</Text>
-          <Text style={s.kicker}>Swipe through our favorite moments ✨</Text>
+        <View style={[styles.container, styles.pageHeader]}>
+          <Text style={styles.h1}>MEDIA</Text>
+          <Text style={styles.kicker}>
+            Performances, workshops, and behind-the-scenes
+          </Text>
         </View>
 
-        <View style={[s.container, { paddingBottom: 24 }]}>
-          {loading ? (
-            <View style={s.stateCard}>
-              <ActivityIndicator />
-              <Text style={s.stateMsg}>Loading…</Text>
-            </View>
-          ) : err ? (
-            <View style={s.stateCard}>
-              <Text style={s.errorTitle}>Heads up</Text>
-              <Text style={s.emptyBody}>{err}</Text>
-            </View>
-          ) : (
-            <Carousel
-              slides={SLIDES}
-              onSlidePress={() =>
-                Linking.openURL(DRIVE_FOLDER_URL).catch(() => {
-                  if (typeof window !== "undefined")
-                    (window as any).open?.(DRIVE_FOLDER_URL, "_blank");
-                })
-              }
-            />
-          )}
+        <View style={styles.container}>
+          {GALLERIES.map((g, idx) => (
+            <GallerySection key={idx} {...g} />
+          ))}
         </View>
       </ScrollView>
     </SafeAreaView>
   );
 }
-function Carousel({
-  slides,
-  onSlidePress,
+
+/** ---------- Section (Hero Image + optional collage/embed) ---------- */
+function GallerySection({
+  title,
+  folderId,
+  slideIds,
 }: {
-  slides: Slide[];
-  onSlidePress: () => void;
+  title: string;
+  folderId: string;
+  slideIds?: string[];
 }) {
-  const { width: screenW } = useWindowDimensions();
-  const listRef = useRef<FlatList>(null);
-  const [index, setIndex] = useState(0);
+  const folderUrl = `https://drive.google.com/drive/folders/${folderId}`;
 
-  const viewerW = Math.min(screenW - 24, 1200);
-  const viewerH = Math.min(viewerW * 0.6, 720); 
+  const slides: Slide[] =
+    (slideIds ?? []).map((id) => {
+      const u = idToUrls(id);
+      return { uri: u.primary, fallbackUri: u.fallback };
+    }) || [];
 
-  const slideW = viewerW;
+  const hero = slides.length > 0 ? slides[0] : undefined;
 
-  const goTo = (i: number) => {
-    const clamped = Math.max(0, Math.min(i, slides.length - 1));
-    setIndex(clamped);
-    listRef.current?.scrollToIndex({ index: clamped, animated: true });
-  };
-  const next = () => goTo(index + 1);
-  const prev = () => goTo(index - 1);
+  return (
+    <View style={styles.sectionCard}>
+      <View style={styles.sectionHeader}>
+        <Text style={styles.sectionTitle}>{title}</Text>
+        <Pressable
+          onPress={() =>
+            Linking.openURL(folderUrl).catch(() => {
+              if (typeof window !== "undefined")
+                (window as any).open?.(folderUrl, "_blank");
+            })
+          }
+          style={styles.cta}
+        >
+          <Text style={styles.ctaText}>Open in Drive</Text>
+        </Pressable>
+      </View>
 
-  const itemLayout = (_: any, i: number) => ({
-    length: slideW,
-    offset: slideW * i,
-    index: i,
+      {hero ? (
+        <>
+          <HeroImage
+            slide={hero}
+            onPress={() =>
+              Linking.openURL(folderUrl).catch(() => {
+                if (typeof window !== "undefined")
+                  (window as any).open?.(folderUrl, "_blank");
+              })
+            }
+          />
+          {/* Optional: show a small collage below the hero using the rest of slides */}
+          {slides.length > 1 && <HeroCollage slides={slides.slice(1)} />}
+        </>
+      ) : Platform.OS === "web" ? (
+        <PrettyDriveEmbed folderId={folderId} />
+      ) : (
+        <NativeFallback folderUrl={folderUrl} />
+      )}
+    </View>
+  );
+}
+
+/** ---------- Simple, reliable hero image that links to Drive ---------- */
+function HeroImage({
+  slide,
+  onPress,
+}: {
+  slide: Slide;
+  onPress: () => void;
+}) {
+  const { width } = useWindowDimensions();
+  const maxW = Math.min(width - 24, 1200);
+  const height = Math.max(Math.round(maxW * 0.56), 380); 
+  return (
+    <Pressable onPress={onPress} style={{ alignSelf: "center" }}>
+      <View
+        style={{
+          width: maxW,
+          height,
+          borderRadius: 18,
+          overflow: "hidden",
+          backgroundColor: "#f6f2eb",
+          borderWidth: 1,
+          borderColor: ACCENT,
+        }}
+      >
+        <DriveImageSimple uri={slide.uri} fallbackUri={slide.fallbackUri} />
+      </View>
+      <Text
+        style={{
+          textAlign: "center",
+          marginTop: 10,
+          color: PURPLE,
+          fontWeight: "800",
+        }}
+      >
+        View Full Gallery →
+      </Text>
+    </Pressable>
+  );
+}
+
+/** Use <img> on web (bypasses RNW image quirks), RN Image on native */
+function DriveImageSimple({ uri, fallbackUri }: { uri: string; fallbackUri?: string }) {
+  const [src, setSrc] = useState(uri);
+  const [loaded, setLoaded] = useState(false);
+
+  if (Platform.OS === "web") {
+    return (
+      <div style={{ width: "100%", height: "100%", position: "relative" }}>
+        <img
+          src={src}
+          style={{
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            display: "block",
+          }}
+          alt=""
+          onLoad={() => setLoaded(true)}
+          onError={() => {
+            if (fallbackUri && src !== fallbackUri) setSrc(fallbackUri);
+          }}
+        />
+        {!loaded && (
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              background: "transparent",
+            }}
+          >
+            <span style={{ color: "#161616" }}>Loading photo…</span>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  return (
+    <View style={{ width: "100%", height: "100%" }}>
+      <Image
+        source={{ uri: src }}
+        style={{ width: "100%", height: "100%" }}
+        resizeMode="cover"
+        onLoadEnd={() => setLoaded(true)}
+        onError={() => {
+          if (fallbackUri && src !== fallbackUri) setSrc(fallbackUri);
+        }}
+      />
+      {!loaded && (
+        <View style={styles.loadingOverlay}>
+          <ActivityIndicator />
+          <Text style={{ color: INK, marginTop: 8 }}>Loading photo…</Text>
+        </View>
+      )}
+    </View>
+  );
+}
+
+/** ---------- Tight masonry collage for the remaining slides ---------- */
+function HeroCollage({ slides }: { slides: Slide[] }) {
+  const { width } = useWindowDimensions();
+
+  const maxW = Math.min(width - 24, 1200);
+  const columns = width < 640 ? 2 : width < 1024 ? 3 : 4;
+  const gap = COLLAGE_GAP;
+  const colW = Math.floor((maxW - gap * (columns - 1)) / columns);
+
+  const [sizes, setSizes] = useState<Record<number, { w: number; h: number }>>({});
+  useEffect(() => {
+    slides.forEach((s, i) => {
+      Image.getSize(
+        s.uri,
+        (w, h) => setSizes((prev) => ({ ...prev, [i]: { w, h } })),
+        () => setSizes((prev) => ({ ...prev, [i]: { w: 3, h: 2 } }))
+      );
+    });
+  }, [slides]);
+
+  const cols: Array<{ i: number; h: number }>[] = Array.from(
+    { length: columns },
+    () => []
+  );
+  const heights = new Array(columns).fill(0);
+
+  slides.forEach((_, i) => {
+    const sz = sizes[i] ?? { w: 3, h: 2 };
+    const targetH = Math.round((sz.h / sz.w) * colW);
+    const k = heights.indexOf(Math.min(...heights));
+    cols[k].push({ i, h: targetH });
+    heights[k] += targetH + gap;
   });
 
   return (
-    <View style={s.carouselWrap}>
-      <View style={[s.viewer, { width: viewerW, height: viewerH }]}>
-        <FlatList
-          ref={listRef}
-          horizontal
-          pagingEnabled
-          data={slides}
-          getItemLayout={itemLayout}
-          showsHorizontalScrollIndicator={false}
-          keyExtractor={(_, i) => String(i)}
-          onMomentumScrollEnd={(e) => {
-            const i = Math.round(e.nativeEvent.contentOffset.x / slideW);
-            setIndex(i);
-          }}
-          renderItem={({ item }) => (
-            <Pressable
-              onPress={onSlidePress}
-              style={{
-                width: slideW,
-                height: "100%", 
-              }}
-            >
-              <Image
-                source={item.source}
-                style={s.slideImg}   
-                resizeMode="cover"  
-              />
-              {item.alt ? (
-                <Text style={s.caption} numberOfLines={1}>
-                  {item.alt}
-                </Text>
-              ) : null}
-            </Pressable>
-          )}
-        />
-
-        {/* Arrows */}
-        <Pressable
-          onPress={prev}
-          style={[s.arrow, s.arrowLeft]}
-          disabled={index === 0}
-        >
-          <Text style={[s.arrowTxt, index === 0 && { opacity: 0.3 }]}>‹</Text>
-        </Pressable>
-        <Pressable
-          onPress={next}
-          style={[s.arrow, s.arrowRight]}
-          disabled={index === slides.length - 1}
-        >
-          <Text
-            style={[
-              s.arrowTxt,
-              index === slides.length - 1 && { opacity: 0.3 },
-            ]}
-          >
-            ›
-          </Text>
-        </Pressable>
-
-        {/* Dots */}
-        <View style={s.dots}>
-          {slides.map((_, i) => (
-            <Pressable
-              key={i}
-              onPress={() => goTo(i)}
-              style={[s.dot, i === index && s.dotActive]}
-            />
-          ))}
-        </View>
+    <View style={[styles.collageWrap, { width: maxW }]}>
+      <View style={[styles.collageRow, { gap }]}>
+        {cols.map((col, ci) => (
+          <View key={ci} style={{ width: colW, gap }}>
+            {col.map(({ i, h }) => (
+              <View
+                key={i}
+                style={{
+                  width: colW,
+                  height: h,
+                  backgroundColor: "#f6f2eb",
+                  borderRadius: 10,
+                  overflow: "hidden",
+                }}
+              >
+                {Platform.OS === "web" ? (
+                  <img
+                    src={slides[i].uri}
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                      display: "block",
+                    }}
+                    alt=""
+                    onError={(e) => {
+                      if (slides[i].fallbackUri) {
+                        (e.currentTarget as HTMLImageElement).src =
+                          slides[i].fallbackUri!;
+                      }
+                    }}
+                  />
+                ) : (
+                  <Image
+                    source={{ uri: slides[i].uri }}
+                    style={{ width: "100%", height: "100%" }}
+                    resizeMode="cover"
+                  />
+                )}
+              </View>
+            ))}
+          </View>
+        ))}
       </View>
     </View>
   );
 }
 
-const s = StyleSheet.create({
-  container: {
-    width: "100%",
-    maxWidth: 1200,
-    alignSelf: "center",
-    paddingHorizontal: 16,
-  },
+/** ---------- Drive embed fallback ---------- */
+function PrettyDriveEmbed({ folderId }: { folderId: string }) {
+  const { width } = useWindowDimensions();
+  const frameW = Math.min(width - 24, 1200);
+  const frameH = Math.max(Math.round(frameW * 0.62), 640);
+  const [loaded, setLoaded] = useState(false);
 
-  pageHeader: { paddingTop: 24, paddingBottom: 8, alignItems: "center" },
-  h1: {
-    color: PURPLE,
-    fontWeight: "900",
-    fontSize: 42,
-    letterSpacing: 0.5,
-    textAlign: "center",
-  },
-  kicker: { color: INK, marginTop: 6, textAlign: "center" },
+  return (
+    <View style={[styles.embedWrap, { width: frameW, height: frameH }]}>
+      {/* @ts-ignore */}
+      <iframe
+        src={`https://drive.google.com/embeddedfolderview?id=${folderId}#grid`}
+        style={{ width: "100%", height: "100%", border: 0 }}
+        onLoad={() => setLoaded(true)}
+      />
+      {!loaded && (
+        <View style={styles.loadingOverlay}>
+          <ActivityIndicator />
+          <Text style={{ color: INK, marginTop: 8 }}>Loading gallery…</Text>
+        </View>
+      )}
+    </View>
+  );
+}
 
-  carouselWrap: { alignItems: "center", justifyContent: "center" },
-  viewer: {
-    backgroundColor: PAPER,
-    borderRadius: 16,
-    overflow: "hidden",
+function NativeFallback({ folderUrl }: { folderUrl: string }) {
+  return (
+    <View style={styles.stateCard}>
+      <Text style={styles.errorTitle}>Web gallery shown on website</Text>
+      <Text style={styles.emptyBody}>
+        On native apps we don’t embed Google Drive. Tap below to open the folder.
+      </Text>
+      <Pressable
+        style={{ marginTop: 10 }}
+        onPress={() =>
+          Linking.openURL(folderUrl).catch(() => {
+            if (typeof window !== "undefined")
+              (window as any).open?.(folderUrl, "_blank");
+          })
+        }
+      >
+        <Text style={{ color: PURPLE, fontWeight: "800" }}>
+          Open Google Drive Folder →
+        </Text>
+      </Pressable>
+    </View>
+  );
+}
+
+/** ------------------------ Styles ------------------------ */
+const styles = StyleSheet.create({
+  container: { width: "100%", maxWidth: 1200, alignSelf: "center", paddingHorizontal: 16 },
+
+  pageHeader: { paddingTop: 24, paddingBottom: 12, alignItems: "center" },
+  h1: { color: PURPLE, fontWeight: "900", fontSize: 48, letterSpacing: 0.5, textAlign: "center" },
+  kicker: { color: INK, opacity: 0.75, marginTop: 6, textAlign: "center" },
+
+  sectionCard: {
+    backgroundColor: "#fffdf8",
+    borderRadius: 18,
     borderWidth: 1,
     borderColor: ACCENT,
-    position: "relative",
+    padding: 16,
+    marginTop: 20,
+    shadowColor: "#000",
+    shadowOpacity: 0.07,
+    shadowRadius: 18,
+    shadowOffset: { width: 0, height: 8 },
+    overflow: "hidden",
   },
-
-  slideImg: { width: "100%", height: "100%" },
-
-  caption: {
-    position: "absolute",
-    bottom: 10,
-    left: 0,
-    right: 0,
-    textAlign: "center",
-    color: "#fff",
-    fontWeight: "700",
-    textShadowColor: "#0008",
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 3,
-    paddingHorizontal: 12,
-  },
-
-  arrow: {
-    position: "absolute",
-    top: "45%",
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    backgroundColor: "#0008",
-    borderRadius: 12,
-    zIndex: 10,
-  },
-  arrowLeft: { left: 10 },
-  arrowRight: { right: 10 },
-  arrowTxt: { color: "#fff", fontSize: 38, fontWeight: "900" },
-
-  dots: {
-    position: "absolute",
-    bottom: 12,
-    left: 0,
-    right: 0,
+  sectionHeader: {
+    paddingHorizontal: 6,
+    paddingVertical: 6,
     flexDirection: "row",
-    justifyContent: "center",
-    gap: 8,
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 10,
   },
-  dot: { width: 8, height: 8, borderRadius: 999, backgroundColor: "#0004" },
-  dotActive: { backgroundColor: PURPLE },
+  sectionTitle: { fontSize: 22, fontWeight: "900", color: INK },
+  cta: {
+    paddingVertical: 8,
+    paddingHorizontal: 14,
+    borderRadius: 999,
+    backgroundColor: "#f1e9da",
+    borderWidth: 1,
+    borderColor: ACCENT,
+  },
+  ctaText: { fontWeight: "900", color: PURPLE, fontSize: 14 },
+
+  collageWrap: { alignSelf: "center", marginTop: 14 },
+  collageRow: { flexDirection: "row", alignItems: "flex-start", justifyContent: "center" },
+
+  embedWrap: {
+    alignSelf: "center",
+    backgroundColor: "#fffdf8",
+    borderRadius: 0,
+    borderWidth: 0,
+    position: "relative",
+    width: "100%",
+  },
+
+  loadingOverlay: {
+    position: "absolute",
+    top: 0, right: 0, bottom: 0, left: 0,
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 6,
+  },
 
   stateCard: {
     alignSelf: "center",
@@ -277,8 +451,8 @@ const s = StyleSheet.create({
     padding: 20,
     alignItems: "center",
     gap: 10,
+    marginTop: 8,
   },
-  stateMsg: { color: INK },
   emptyBody: { marginTop: 4, color: INK, textAlign: "center", lineHeight: 20 },
   errorTitle: { fontSize: 18, fontWeight: "900", color: "#a00", textAlign: "center" },
 });
