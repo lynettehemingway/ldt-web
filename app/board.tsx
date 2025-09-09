@@ -363,7 +363,7 @@ export default function Board() {
                   width: "100%",
                   flexDirection: isWideHero ? "row" : "column",
                   alignItems: isWideHero ? "stretch" : "center",
-                  justifyContent: "center",
+                  justifyContent: isWideHero ? "space-between" : "center",
                   gap: COL_GAP,
                 }}
               >
@@ -404,9 +404,11 @@ export default function Board() {
                     alignItems: isWideHero ? "flex-start" : "center",
                     justifyContent: "center",
                     gap: 8,
-                    maxWidth: isWideHero ? 600 : undefined,
-                    paddingHorizontal: isWideHero ? 8 : 0,
-                    marginLeft: isWideHero ? 4 : 0,
+                    minWidth: 0,
+                    flexBasis: 0,
+                    flexGrow: 1,
+                    paddingRight: 0,          // keep tight to the card's right padding
+                    marginLeft: "auto",
                     position: "relative", // for chevrons placement
                     paddingBottom: isWideHero ? 36 : 0,
                   }}
@@ -419,7 +421,7 @@ export default function Board() {
                       { textAlign: isWideHero ? "left" : "center", fontSize: COPY_SIZE, lineHeight: COPY_LH },
                     ]}
                   >
-                    Lorem ipsum.
+                    The board leads our team with dedication, creativity, and a passion for lion dance.
                   </Text>
 
                   {/* Chevrons-only indicator — clickable to scroll to grid */}
@@ -574,7 +576,7 @@ const styles = StyleSheet.create({
   // Title styles
   kicker: { color: INK, fontWeight: "900", letterSpacing: 1 },
   h1: { color: PURPLE, fontWeight: "900", letterSpacing: 1 },
-  copyCenter: { color: INK, maxWidth: 520, textAlign: "center" },
+  copyCenter: { color: INK, maxWidth: 680, textAlign: "center" },
 
   // Group image styles
   groupWrap: {
