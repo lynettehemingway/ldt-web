@@ -32,18 +32,26 @@ const GALLERIES: {
   slideIds?: string[];
 }[] = [
   {
-    title: "LDT Workshop • 09/11/2025",
-    folderId: "1oM2-p7UQ6Vr1cPKIADcTY_GCMVsWNzGU",
+    title: "LDT x CASA x VSO Workshop • 09/05/2025",
+    folderId: "1Rb-zR2zjL39yStZnq8Q2JMym1izlA9Ho",
     slideIds: [
-      "1VHFR67WcItbqKgsBX-kBzJjpCshg7lZi", 
-      "1LJg_vebCXh9g0i8Dr4iWhXZhBZvRTPMt",
-      "1uqESPISNFMA_t-5L7ipXnW4W1Aoac4xu",
-      "1bjA7vGfbn80E2YldzJ1OcWGAaaXGnCsZ",
-      "1ePO4e5j22peSBJndd5fLkOTi55t1TA14",
-      "1SOA_UitxG2Vo2V9XPyc7fjIVqfzAm2D3",
-      "1tlGj065VUMN6HQ2qxA09IErTwe9ltZzF",
-      "1tlGj065VUMN6HQ2qxA09IErTwe9ltZzF",
-      "1hEUNpApBS5fQATcgQZgHHf881bWpLgxl",
+      "1J_YYT3ICdeNq01XDeZQz5nG2w6pVISyO", 
+      "17OEjgdktNCl8ynbPAWNb9W9zTcGjWpxa",
+      "1kRvwOqUpEi6_7xTYSQQn0pCIdZ8w8Uxq",
+      "1xJIkPHSFKRKp4Dg9dsFdRqS2cUv6aziN",
+      "19w2xeg4iZpChTflHmVW-zO2TexhGLTTR",
+      "1H5difcnVGQp9EdXhU5qacKG0eIrcw2Ju",
+      "114xG4s3ILLSOV-A8aoT8LMGWYCYlJ5NW",
+      "1nblWcwg8MN5pfbqJ3a1sroPD0GpWEsNv",
+      "1jeoCg2GqCUE0RexQXvrCpcuMWbLxDL_p",
+      "1MADNctYHRL3jLukrYUTDEK4j8RojSvVp",
+    ],
+  },
+    {
+    title: "LDT Workshop • 09/11/2025",
+    folderId: "1O5ZQpwQhO9gU8uqNmxGD7W3HNkYPZOwN",
+    slideIds: [
+      "1nnyt4WmVuM2-nILvoxTFng3xB6TUxADO", 
     ],
   },
 ];

@@ -1,18 +1,19 @@
 import React, { useMemo, useState } from "react";
 import {
-    Image,
-    Linking,
-    Platform,
-    Pressable,
-    SafeAreaView,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    View,
-    useWindowDimensions,
+  Image,
+  Linking,
+  Platform,
+  Pressable,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+  useWindowDimensions,
 } from "react-native";
 import Header from "../app/header";
+import h from "../assets/media/one.png";
 
 const BRAND_SERIF =
   Platform.OS === "web"
@@ -53,9 +54,9 @@ const PRODUCTS: Product[] = [
     name: "Coming Soon",
     price: 25,
     category: "tees",
-    description: "blahblah",
-    image: "https://images.unsplash.com/photo-1520975916090-3105956dac38?q=80&w=1200&auto=format&fit=crop",
-    link: "https://instagram.com/ldt",
+    description: "Stay Tuned!",
+    image: h,
+    link: "https://instagram.com/uf.ldt",
   },
 ];
 
@@ -145,7 +146,7 @@ function Card({ product }: { product: Product }) {
         pressed && { transform: [{ scale: 0.98 }] },
       ]}
     >
-      <Image source={{ uri: product.image }} resizeMode="cover" style={s.cardImg} />
+      <Image source={product.image} style={{ width: 400, height: 300 }} />
       <View style={s.cardBody}>
         <Text style={s.cardTitle}>{product.name}</Text>
         <Text style={s.price}>{currency(product.price)}</Text>
