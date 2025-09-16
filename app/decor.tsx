@@ -1,12 +1,12 @@
 import React from "react";
 import {
-  Image,
-  ImageStyle,
-  StyleProp,
-  StyleSheet,
-  Text,
-  View,
-  ViewStyle,
+    Image,
+    ImageStyle,
+    StyleProp,
+    StyleSheet,
+    Text,
+    View,
+    ViewStyle,
 } from "react-native";
 
 export function SideTag({ style }: { style?: StyleProp<ViewStyle> }) {

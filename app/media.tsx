@@ -76,6 +76,13 @@ type Slide = { sources: string[] };
 
 export default function MediaPage() {
   const headerOffset = Platform.OS === "web" ? HEADER_H : 0;
+  const { width: winW } = useWindowDimensions();
+
+  // responsive size helper (matches board.tsx behavior)
+  const clamp = (n: number, lo: number, hi: number) => Math.max(lo, Math.min(n, hi));
+  const rsize = (winW: number, pref: number, min: number, max: number, base = 1200) =>
+    clamp(Math.round(pref * (winW / base)), min, max);
+  const KICKER_SIZE = rsize(winW, 14, 12, 16);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: PAPER }}>
@@ -87,7 +94,7 @@ export default function MediaPage() {
       >
         <View style={[styles.container, styles.pageHeader]}>
           <Text style={styles.h1}>MEDIA</Text>
-          <Text style={styles.kicker}>
+          <Text style={[styles.kicker, { fontSize: KICKER_SIZE }]}>
             Performances, workshops, and behind-the-scenes
           </Text>
         </View>
@@ -420,7 +427,7 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
     textAlign: "center",
   },
-  kicker: { color: INK, opacity: 0.75, marginTop: 6, textAlign: "center" },
+  kicker: { color: INK, fontWeight: "900", letterSpacing: 1  },
 
   sectionCard: {
     backgroundColor: "#fffdf8",

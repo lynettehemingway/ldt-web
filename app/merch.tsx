@@ -66,6 +66,12 @@ const currency = (n: number) => `$${n.toFixed(2)}`;
 
 export default function MerchPage() {
   const { width } = useWindowDimensions();
+
+  // match media/board responsive kicker sizing
+  const clamp = (n: number, lo: number, hi: number) => Math.max(lo, Math.min(n, hi));
+  const rsize = (winW: number, pref: number, min: number, max: number, base = 1200) =>
+    clamp(Math.round(pref * (winW / base)), min, max);
+  const KICKER_SIZE = rsize(width, 14, 12, 16);
   const [category, setCategory] = useState<string>("all");
   const [search, setSearch] = useState<string>("");
 
@@ -96,6 +102,7 @@ export default function MerchPage() {
         {/* Page Title */}
         <View style={[s.pageHeader, s.container]}>
           <Text style={[s.pageHeaderTitle, { textAlign: "center", width: "100%" }]}>LDT MERCH</Text>
+          <Text style={[s.kicker, { fontSize: KICKER_SIZE, marginTop: 6, textAlign: "center" }]}>Rep our team. Coming soon!</Text>
         </View>
 
         {/* Toolbar */}
@@ -239,6 +246,7 @@ const s = StyleSheet.create({
     letterSpacing: 1,
     textTransform: "uppercase",
   },
+  kicker: { color: INK, fontWeight: "900", letterSpacing: 1 },
 
   container: { width: "100%", maxWidth: 1040, alignSelf: "center", paddingHorizontal: 16 },
   toolbar: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 12 },

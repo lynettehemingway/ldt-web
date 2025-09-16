@@ -41,9 +41,9 @@ export default function Header() {
           <Text style={styles.navLink}>Home</Text>
         </TouchableOpacity>
       </Link>
-      <Link href='/about' asChild>
+      <Link href='/board' asChild>
         <TouchableOpacity onPress={() => setMenuOpen(false)}>
-          <Text style={styles.navLink}>About</Text>
+          <Text style={styles.navLink}>Board</Text>
         </TouchableOpacity>
       </Link>
       <Link href='/media' asChild>

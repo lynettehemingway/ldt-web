@@ -442,11 +442,15 @@ export default function Board() {
             <View style={{ height: isMobile ? 40 : 64 }} />
           </>
         }
-        renderSectionHeader={({ section }) => (
-          <View style={styles.sectionHeaderWrap}>
-            <Text style={[styles.sectionHeader, { fontSize: SECTION_H }]}>{section.title}</Text>
-          </View>
-        )}
+        renderSectionHeader={({ section }) => {
+          const title = String(section.title ?? "");
+          const isAccent = /executive|chair/i.test(title);
+          return (
+            <View style={styles.sectionHeaderWrap}>
+              <Text style={[styles.sectionHeader, { fontSize: SECTION_H, color: isAccent ? PURPLE : INK }]}>{title}</Text>
+            </View>
+          );
+        }}
         renderItem={({ item: row }) => (
           <View
             style={{
