@@ -175,7 +175,7 @@ export default function Home() {
   const STAR = clamp(base * 0.05, 18, 50);
 
   // Image column aspect & behavior:
-  const IMAGE_RESIZE_MODE: "contain" | "cover" = "contain"; // Change to "cover" for bolder crop
+  const IMAGE_RESIZE_MODE: "contain" | "cover" = "contain";
 
   // Smooth scroll to pillars
   const scrollToPillars = () => {
