@@ -56,24 +56,16 @@ const GALLERIES: {
   },
 ];
 
-/** URLs that work well for HEIC/JPG/PNG (use `uc?export` endpoints for direct image access when files are shared)
- *  Note: files must be shared so "Anyone with the link can view" for these to load in public pages.
- */
+/** URLs that work well for HEIC/JPG/PNG */
 const idToUrls = (id: string) => {
-  const bust = `t=${Date.now()}`;
-  const PROXY_BASE = typeof process !== 'undefined' && (process.env as any).IMAGE_PROXY_BASE;
-  const candidates = [];
-  if (PROXY_BASE) {
-    // Proxy will convert HEIC to JPEG dynamically
-    candidates.push(`${PROXY_BASE.replace(/\/$/, '')}/image?id=${id}&w=1600&${bust}`);
-  }
-  candidates.push(`https://drive.google.com/uc?export=view&id=${id}&${bust}`);
-  candidates.push(`https://lh3.googleusercontent.com/d/${id}=w2400?${bust}`);
-  candidates.push(`https://drive.google.com/thumbnail?id=${id}&sz=w2400&${bust}`);
-  return candidates;
+  const bust = `t=${Date.now()}`; 
+  return {
+    primary: `https://drive.google.com/thumbnail?id=${id}&sz=w2400&${bust}`,
+    fallback: `https://lh3.googleusercontent.com/d/${id}=w2400?${bust}`,
+  };
 };
 
-type Slide = { candidates: string[] };
+type Slide = { uri: string; fallbackUri?: string };
 
 export default function MediaPage() {
   const headerOffset = Platform.OS === "web" ? HEADER_H : 0;
@@ -117,8 +109,8 @@ function GallerySection({
 
   const slides: Slide[] =
     (slideIds ?? []).map((id) => {
-      const c = idToUrls(id);
-      return { candidates: c };
+      const u = idToUrls(id);
+      return { uri: u.primary, fallbackUri: u.fallback };
     }) || [];
 
   const hero = slides.length > 0 ? slides[0] : undefined;
@@ -187,7 +179,7 @@ function HeroImage({
           borderColor: ACCENT,
         }}
       >
-        <DriveImageSimple candidates={slide.candidates} />
+        <DriveImageSimple uri={slide.uri} fallbackUri={slide.fallbackUri} />
       </View>
       <Text
         style={{
@@ -204,18 +196,9 @@ function HeroImage({
 }
 
 /** Use <img> on web (bypasses RNW image quirks), RN Image on native */
-function DriveImageSimple({ candidates }: { candidates: string[] }) {
-  const [idx, setIdx] = useState(0);
+function DriveImageSimple({ uri, fallbackUri }: { uri: string; fallbackUri?: string }) {
+  const [src, setSrc] = useState(uri);
   const [loaded, setLoaded] = useState(false);
-  const src = candidates[idx];
-
-  useEffect(() => {
-    setLoaded(false);
-  }, [src]);
-
-  const tryNext = () => {
-    if (idx < candidates.length - 1) setIdx((i) => i + 1);
-  };
 
   if (Platform.OS === "web") {
     return (
@@ -230,7 +213,9 @@ function DriveImageSimple({ candidates }: { candidates: string[] }) {
           }}
           alt=""
           onLoad={() => setLoaded(true)}
-          onError={() => tryNext()}
+          onError={() => {
+            if (fallbackUri && src !== fallbackUri) setSrc(fallbackUri);
+          }}
         />
         {!loaded && (
           <div
@@ -257,7 +242,9 @@ function DriveImageSimple({ candidates }: { candidates: string[] }) {
         style={{ width: "100%", height: "100%" }}
         resizeMode="cover"
         onLoadEnd={() => setLoaded(true)}
-        onError={() => tryNext()}
+        onError={() => {
+          if (fallbackUri && src !== fallbackUri) setSrc(fallbackUri);
+        }}
       />
       {!loaded && (
         <View style={styles.loadingOverlay}>
@@ -282,7 +269,7 @@ function HeroCollage({ slides }: { slides: Slide[] }) {
   useEffect(() => {
     slides.forEach((s, i) => {
       Image.getSize(
-        s.candidates[0],
+        s.uri,
         (w, h) => setSizes((prev) => ({ ...prev, [i]: { w, h } })),
         () => setSizes((prev) => ({ ...prev, [i]: { w: 3, h: 2 } }))
       );
@@ -321,7 +308,7 @@ function HeroCollage({ slides }: { slides: Slide[] }) {
               >
                 {Platform.OS === "web" ? (
                   <img
-                    src={slides[i].candidates[0]}
+                    src={slides[i].uri}
                     style={{
                       width: "100%",
                       height: "100%",
@@ -330,19 +317,15 @@ function HeroCollage({ slides }: { slides: Slide[] }) {
                     }}
                     alt=""
                     onError={(e) => {
-                      const c = slides[i].candidates;
-                      const cur = (e.currentTarget as HTMLImageElement).src;
-                      const idx = c.indexOf(cur);
-                      if (idx >= 0 && idx < c.length - 1) {
-                        (e.currentTarget as HTMLImageElement).src = c[idx + 1];
-                      } else if (c.length > 1) {
-                        (e.currentTarget as HTMLImageElement).src = c[1];
+                      if (slides[i].fallbackUri) {
+                        (e.currentTarget as HTMLImageElement).src =
+                          slides[i].fallbackUri!;
                       }
                     }}
                   />
                 ) : (
                   <Image
-                    source={{ uri: slides[i].candidates[0] }}
+                    source={{ uri: slides[i].uri }}
                     style={{ width: "100%", height: "100%" }}
                     resizeMode="cover"
                   />
