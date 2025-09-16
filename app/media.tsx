@@ -1,3 +1,4 @@
+// app/media.tsx
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -35,7 +36,7 @@ const GALLERIES: {
     title: "LDT x CASA x VSO Workshop • 09/05/2025",
     folderId: "1Rb-zR2zjL39yStZnq8Q2JMym1izlA9Ho",
     slideIds: [
-      "1J_YYT3ICdeNq01XDeZQz5nG2w6pVISyO", 
+      "1J_YYT3ICdeNq01XDeZQz5nG2w6pVISyO",
       "17OEjgdktNCl8ynbPAWNb9W9zTcGjWpxa",
       "1kRvwOqUpEi6_7xTYSQQn0pCIdZ8w8Uxq",
       "1xJIkPHSFKRKp4Dg9dsFdRqS2cUv6aziN",
@@ -47,25 +48,31 @@ const GALLERIES: {
       "1MADNctYHRL3jLukrYUTDEK4j8RojSvVp",
     ],
   },
-    {
+  {
     title: "LDT Workshop • 09/11/2025",
     folderId: "1O5ZQpwQhO9gU8uqNmxGD7W3HNkYPZOwN",
-    slideIds: [
-      "1nnyt4WmVuM2-nILvoxTFng3xB6TUxADO", 
-    ],
+    slideIds: ["1nnyt4WmVuM2-nILvoxTFng3xB6TUxADO"],
   },
 ];
 
-/** URLs that work well for HEIC/JPG/PNG */
-const idToUrls = (id: string) => {
-  const bust = `t=${Date.now()}`; 
-  return {
-    primary: `https://drive.google.com/thumbnail?id=${id}&sz=w2400&${bust}`,
-    fallback: `https://lh3.googleusercontent.com/d/${id}=w2400?${bust}`,
-  };
+/** Build multiple cookie-free-ish candidates for each Drive file ID.
+ * Order matters: try the least cookie-sensitive first.
+ */
+const idToCandidates = (id: string) => {
+  const bust = `t=${Date.now()}`; // cache-buster
+  return [
+    // Often returns JPEG/WEBP for HEIC; generally works without login
+    `https://drive.google.com/uc?export=view&id=${id}&${bust}`,
+    // Public googleusercontent pipe
+    `https://lh3.googleusercontent.com/d/${id}=w2400?${bust}`,
+    // Thumbnail endpoint (sometimes cookie-gated; keep later)
+    `https://drive.google.com/thumbnail?id=${id}&sz=w2400&${bust}`,
+    // Download endpoint can still render as <img> in many cases
+    `https://drive.google.com/uc?export=download&id=${id}&${bust}`,
+  ];
 };
 
-type Slide = { uri: string; fallbackUri?: string };
+type Slide = { sources: string[] };
 
 export default function MediaPage() {
   const headerOffset = Platform.OS === "web" ? HEADER_H : 0;
@@ -108,10 +115,9 @@ function GallerySection({
   const folderUrl = `https://drive.google.com/drive/folders/${folderId}`;
 
   const slides: Slide[] =
-    (slideIds ?? []).map((id) => {
-      const u = idToUrls(id);
-      return { uri: u.primary, fallbackUri: u.fallback };
-    }) || [];
+    (slideIds ?? []).map((id) => ({
+      sources: idToCandidates(id),
+    })) || [];
 
   const hero = slides.length > 0 ? slides[0] : undefined;
 
@@ -165,7 +171,7 @@ function HeroImage({
 }) {
   const { width } = useWindowDimensions();
   const maxW = Math.min(width - 24, 1200);
-  const height = Math.max(Math.round(maxW * 0.56), 380); 
+  const height = Math.max(Math.round(maxW * 0.56), 380);
   return (
     <Pressable onPress={onPress} style={{ alignSelf: "center" }}>
       <View
@@ -179,7 +185,7 @@ function HeroImage({
           borderColor: ACCENT,
         }}
       >
-        <DriveImageSimple uri={slide.uri} fallbackUri={slide.fallbackUri} />
+        <DriveImageSimple sources={slide.sources} />
       </View>
       <Text
         style={{
@@ -195,16 +201,22 @@ function HeroImage({
   );
 }
 
-/** Use <img> on web (bypasses RNW image quirks), RN Image on native */
-function DriveImageSimple({ uri, fallbackUri }: { uri: string; fallbackUri?: string }) {
-  const [src, setSrc] = useState(uri);
+/** Reusable image that iterates through multiple candidate URLs until one loads. */
+function DriveImageSimple({ sources }: { sources: string[] }) {
+  const [idx, setIdx] = useState(0);
   const [loaded, setLoaded] = useState(false);
+
+  const tryNext = () => {
+    setLoaded(false);
+    setIdx((i) => (i + 1 < sources.length ? i + 1 : i));
+  };
 
   if (Platform.OS === "web") {
     return (
       <div style={{ width: "100%", height: "100%", position: "relative" }}>
         <img
-          src={src}
+          src={sources[idx]}
+          referrerPolicy="no-referrer"
           style={{
             width: "100%",
             height: "100%",
@@ -213,9 +225,7 @@ function DriveImageSimple({ uri, fallbackUri }: { uri: string; fallbackUri?: str
           }}
           alt=""
           onLoad={() => setLoaded(true)}
-          onError={() => {
-            if (fallbackUri && src !== fallbackUri) setSrc(fallbackUri);
-          }}
+          onError={tryNext}
         />
         {!loaded && (
           <div
@@ -235,16 +245,15 @@ function DriveImageSimple({ uri, fallbackUri }: { uri: string; fallbackUri?: str
     );
   }
 
+  // Native
   return (
     <View style={{ width: "100%", height: "100%" }}>
       <Image
-        source={{ uri: src }}
+        source={{ uri: sources[idx] }}
         style={{ width: "100%", height: "100%" }}
         resizeMode="cover"
         onLoadEnd={() => setLoaded(true)}
-        onError={() => {
-          if (fallbackUri && src !== fallbackUri) setSrc(fallbackUri);
-        }}
+        onError={tryNext}
       />
       {!loaded && (
         <View style={styles.loadingOverlay}>
@@ -265,11 +274,14 @@ function HeroCollage({ slides }: { slides: Slide[] }) {
   const gap = COLLAGE_GAP;
   const colW = Math.floor((maxW - gap * (columns - 1)) / columns);
 
-  const [sizes, setSizes] = useState<Record<number, { w: number; h: number }>>({});
+  const [sizes, setSizes] = useState<Record<number, { w: number; h: number }>>(
+    {}
+  );
   useEffect(() => {
     slides.forEach((s, i) => {
+      // Try first candidate to estimate aspect; fallback to default if it errors
       Image.getSize(
-        s.uri,
+        s.sources[0],
         (w, h) => setSizes((prev) => ({ ...prev, [i]: { w, h } })),
         () => setSizes((prev) => ({ ...prev, [i]: { w: 3, h: 2 } }))
       );
@@ -306,36 +318,39 @@ function HeroCollage({ slides }: { slides: Slide[] }) {
                   overflow: "hidden",
                 }}
               >
-                {Platform.OS === "web" ? (
-                  <img
-                    src={slides[i].uri}
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "cover",
-                      display: "block",
-                    }}
-                    alt=""
-                    onError={(e) => {
-                      if (slides[i].fallbackUri) {
-                        (e.currentTarget as HTMLImageElement).src =
-                          slides[i].fallbackUri!;
-                      }
-                    }}
-                  />
-                ) : (
-                  <Image
-                    source={{ uri: slides[i].uri }}
-                    style={{ width: "100%", height: "100%" }}
-                    resizeMode="cover"
-                  />
-                )}
+                <CollageImage sources={slides[i].sources} />
               </View>
             ))}
           </View>
         ))}
       </View>
     </View>
+  );
+}
+
+/** Smaller image component for the collage that also falls forward on errors. */
+function CollageImage({ sources }: { sources: string[] }) {
+  const [idx, setIdx] = useState(0);
+  const tryNext = () => setIdx((i) => (i + 1 < sources.length ? i + 1 : i));
+
+  if (Platform.OS === "web") {
+    return (
+      <img
+        src={sources[idx]}
+        referrerPolicy="no-referrer"
+        style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+        alt=""
+        onError={tryNext}
+      />
+    );
+  }
+  return (
+    <Image
+      source={{ uri: sources[idx] }}
+      style={{ width: "100%", height: "100%" }}
+      resizeMode="cover"
+      onError={tryNext}
+    />
   );
 }
 
@@ -390,10 +405,21 @@ function NativeFallback({ folderUrl }: { folderUrl: string }) {
 
 /** ------------------------ Styles ------------------------ */
 const styles = StyleSheet.create({
-  container: { width: "100%", maxWidth: 1200, alignSelf: "center", paddingHorizontal: 16 },
+  container: {
+    width: "100%",
+    maxWidth: 1200,
+    alignSelf: "center",
+    paddingHorizontal: 16,
+  },
 
   pageHeader: { paddingTop: 24, paddingBottom: 12, alignItems: "center" },
-  h1: { color: PURPLE, fontWeight: "900", fontSize: 48, letterSpacing: 0.5, textAlign: "center" },
+  h1: {
+    color: PURPLE,
+    fontWeight: "900",
+    fontSize: 48,
+    letterSpacing: 0.5,
+    textAlign: "center",
+  },
   kicker: { color: INK, opacity: 0.75, marginTop: 6, textAlign: "center" },
 
   sectionCard: {
@@ -429,7 +455,11 @@ const styles = StyleSheet.create({
   ctaText: { fontWeight: "900", color: PURPLE, fontSize: 14 },
 
   collageWrap: { alignSelf: "center", marginTop: 14 },
-  collageRow: { flexDirection: "row", alignItems: "flex-start", justifyContent: "center" },
+  collageRow: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    justifyContent: "center",
+  },
 
   embedWrap: {
     alignSelf: "center",
@@ -442,7 +472,10 @@ const styles = StyleSheet.create({
 
   loadingOverlay: {
     position: "absolute",
-    top: 0, right: 0, bottom: 0, left: 0,
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
     alignItems: "center",
     justifyContent: "center",
     gap: 6,
@@ -462,7 +495,12 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   emptyBody: { marginTop: 4, color: INK, textAlign: "center", lineHeight: 20 },
-  errorTitle: { fontSize: 18, fontWeight: "900", color: "#a00", textAlign: "center" },
+  errorTitle: {
+    fontSize: 18,
+    fontWeight: "900",
+    color: "#a00",
+    textAlign: "center",
+  },
 });
 
 export { };
