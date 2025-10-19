@@ -1,7 +1,8 @@
 import * as Font from "expo-font";
 import { Link, usePathname } from "expo-router";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
+  Animated,
   Image,
   Platform,
   Pressable,
@@ -10,31 +11,95 @@ import {
   View,
   useWindowDimensions,
 } from "react-native";
-import { Lantern } from "../app/decor";
+
 const BRAND_SERIF =
-  Platform.OS === "web"
-    ? "'Merriweather', Georgia, serif"
-    : "Merriweather_900Black"; 
+  Platform.OS === "web" ? "'Merriweather', Georgia, serif" : "Merriweather_900Black";
+
+export const HEADER_H = 90;
+
+const PAPER  = "#f7f4f1ff";
+const ACCENT = "#d9cdbb";
+const PURPLE = "#6f00ff";
+const INK    = "#161616";
+const BREAKPOINT = 900; // switch to hamburger
 
 const NAV = [
   { label: "HOME", href: "/" },
   { label: "BOARD", href: "/board" },
   { label: "MEDIA", href: "/media" },
   { label: "MERCH", href: "/merch" },
+  { label: "CONTACT", href: "/contact" },
 ];
 
-export const HEADER_H = 90;
-const PAPER = "#f6f1ea";
-const ACCENT = "#d9cdbb";
-const PURPLE = "#6f00ff";
-const BREAKPOINT = 900; // width where we switch to hamburger
+// ---- Small component to get a nice hover underline + color change ----
+function NavLink({
+  label,
+  href,
+  active,
+  onNavigate,
+}: {
+  label: string;
+  href: string;
+  active: boolean;
+  onNavigate?: () => void;
+}) {
+  const [hovered, setHovered] = useState(false);
+  const underline = useRef(new Animated.Value(active ? 1 : 0)).current;
+
+  // animate underline on hover/active
+  useEffect(() => {
+    Animated.timing(underline, {
+      toValue: hovered || active ? 1 : 0,
+      duration: 220,
+      useNativeDriver: true,
+    }).start();
+  }, [hovered, active, underline]);
+
+  return (
+    <Link href={href as any} asChild>
+      <Pressable
+        onPress={onNavigate}
+        onHoverIn={Platform.OS === "web" ? () => setHovered(true) : undefined}
+        onHoverOut={Platform.OS === "web" ? () => setHovered(false) : undefined}
+        style={({ pressed }) => [
+          styles.navItem,
+          {
+            transform: [{ scale: pressed ? 0.96 : hovered ? 1.04 : 1 }],
+            ...(Platform.OS === "web" ? { cursor: "pointer" } : null),
+          },
+        ]}
+      >
+        <View style={{ alignItems: "center" }}>
+          <Text
+            style={[
+              styles.link,
+              { color: active || hovered ? PURPLE : INK, fontWeight: active ? "900" : "700" },
+            ]}
+          >
+            {label}
+          </Text>
+          {/* underline that grows in using scaleX */}
+          <Animated.View
+            style={[
+              styles.underline,
+              {
+                transform: [{ scaleX: underline }],
+                opacity: hovered || active ? 1 : 0.5,
+              },
+            ]}
+          />
+        </View>
+      </Pressable>
+    </Link>
+  );
+}
 
 export default function Header() {
   const pathname = usePathname();
   const { width } = useWindowDimensions();
-  const [fontLoaded, setFontLoaded] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
+  // load display font (was in your original)
   useEffect(() => {
     Font.loadAsync({
       "CaveatBrush-Regular": {
@@ -42,38 +107,21 @@ export default function Header() {
           "https://fonts.gstatic.com/s/caveatbrush/v17/EYq0maZfwr9S9-ETZc3fKXt8Qn3D_Q.woff2",
         display: Font.FontDisplay.SWAP,
       },
-    }).then(() => setFontLoaded(true));
+    }).catch(() => {});
   }, []);
 
   const isHome = pathname === "/" || pathname === "/index";
   const isMobile = width < BREAKPOINT;
 
-  // --- Lantern sizing/placement attached to header bottom ---
-  const LAN_W = clamp(width * 0.09, 44, 96);
-  const LAN_H = Math.round(LAN_W * (64 / 40)); // preserves image aspect
-  const LAN_RIGHT = clamp(width * 0.015, 8, 24);
-  const LAN_OVERHANG = Math.round(LAN_H * 0.60); // how far it hangs below the header
-  // ----------------------------------------------------------
-
   return (
     <View style={styles.fixed}>
       <View style={styles.bar}>
-        {/* left logo + title */}
+        {/* left: logo + title */}
         <Link href="/" asChild>
           <Pressable style={styles.logoWrap} onPress={() => setMenuOpen(false)}>
             <Image source={require("../assets/images/logo.png")} style={styles.logo} />
             <View>
-              <Text
-                style={[
-                  styles.title,
-                  {
-                    fontFamily
-                      : BRAND_SERIF,
-                  },
-                ]}
-              >
-                Lion Dance Team
-              </Text>
+              <Text style={[styles.title, { fontFamily: BRAND_SERIF }]}>Lion Dance Team</Text>
               <Text style={styles.subtitle}>at the University of Florida</Text>
             </View>
           </Pressable>
@@ -85,11 +133,13 @@ export default function Header() {
             {NAV.map((n) => {
               const active = (n.href === "/" && isHome) || pathname === n.href;
               return (
-                <Link key={n.href} href={n.href as any} asChild>
-                  <Pressable>
-                    <Text style={[styles.link, active && styles.linkActive]}>{n.label}</Text>
-                  </Pressable>
-                </Link>
+                <NavLink
+                  key={n.href}
+                  label={n.label}
+                  href={n.href}
+                  active={active}
+                  onNavigate={() => setMenuOpen(false)}
+                />
               );
             })}
           </View>
@@ -102,47 +152,25 @@ export default function Header() {
 
       <View style={styles.rule} />
 
-      {/* Mobile dropdown (below the rule) */}
+      {/* Mobile dropdown */}
       {isMobile && menuOpen && (
         <View style={styles.mobileMenu}>
           {NAV.map((n) => {
             const active = (n.href === "/" && isHome) || pathname === n.href;
             return (
-              <Link key={n.href} href={n.href as any} asChild>
-                <Pressable
-                  onPress={() => setMenuOpen(false)}
-                  style={styles.mobileLinkWrap}
-                >
-                  <Text style={[styles.mobileLink, active && styles.linkActive]}>
-                    {n.label}
-                  </Text>
-                </Pressable>
-              </Link>
+              <NavLink
+                key={n.href}
+                label={n.label}
+                href={n.href}
+                active={active}
+                onNavigate={() => setMenuOpen(false)}
+              />
             );
           })}
         </View>
       )}
-
-      {/* Lantern hangs from header bottom — IMPORTANT: use only bottom, NOT top */}
-      {(pathname === "/" || pathname === "/index") && (
-        <Lantern
-          style={{
-            position: "absolute",
-            right: LAN_RIGHT,
-            bottom: -LAN_OVERHANG - 54,
-            width: LAN_W,
-            height: LAN_H,
-            zIndex: 1001,
-          }}
-        />
-      )}
-
     </View>
   );
-}
-
-function clamp(v: number, lo: number, hi: number) {
-  return Math.max(lo, Math.min(v, hi));
 }
 
 const styles = StyleSheet.create({
@@ -153,7 +181,6 @@ const styles = StyleSheet.create({
     right: 0,
     zIndex: 1000,
     backgroundColor: PAPER,
-    // allow the lantern to hang outside
     overflow: "visible",
   },
   bar: {
@@ -168,11 +195,23 @@ const styles = StyleSheet.create({
   },
   logoWrap: { flexDirection: "row", alignItems: "center", gap: 12 },
   logo: { width: 70, height: 70, resizeMode: "contain" },
-  title: { fontSize: 28, color: "#000", lineHeight: 30, fontWeight: "900", fontFamily: BRAND_SERIF},
+  title: { fontSize: 28, color: "#000", lineHeight: 30, fontWeight: "900" },
   subtitle: { fontSize: 14, color: "#000" },
-  links: { flexDirection: "row", gap: 36, alignItems: "center" },
-  link: { fontWeight: "500", fontSize: 18, letterSpacing: 1, color: "#000" },
-  linkActive: { color: PURPLE },
+
+  // desktop nav
+  links: { flexDirection: "row", gap: 28, alignItems: "center" },
+  navItem: { paddingHorizontal: 8, paddingVertical: 6, alignItems: "center" },
+  link: { fontSize: 18, letterSpacing: 1, textTransform: "uppercase" },
+  underline: {
+    height: 2,
+    backgroundColor: PURPLE,
+    width: "100%",
+    marginTop: 4,
+    borderRadius: 999,
+    transform: [{ scaleX: 0 }],
+  },
+
+  // hairline rule
   rule: { height: 2, backgroundColor: ACCENT, width: "100%" },
 
   // hamburger
@@ -185,7 +224,7 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: ACCENT,
     paddingVertical: 8,
+    alignItems: "center",
+    gap: 6,
   },
-  mobileLinkWrap: { paddingVertical: 10, paddingHorizontal: 24 },
-  mobileLink: { fontSize: 18, color: "#000", fontWeight: "700", fontFamily: BRAND_SERIF },
 });

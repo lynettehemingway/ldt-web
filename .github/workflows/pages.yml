@@ -1,9 +1,9 @@
 name: deploy expo web to pages
 
+
 on:
   push:
-    branches: [main]
-  workflow_dispatch:
+    branches: [ main ]
 
 permissions:
   contents: read
@@ -12,7 +12,7 @@ permissions:
 
 concurrency:
   group: "pages"
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   build:
@@ -21,10 +21,11 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: "22"
-      - run: npm ci || npm i
-      - run: npx expo export --platform web --output-dir dist
-      - run: node -e "require('fs').copyFileSync('dist/index.html','dist/404.html')"
+          node-version: 18
+      - run: npm ci
+      - run: npm run build
+      - name: copy spa fallback
+        run: node -e "require('fs').copyFileSync('dist/index.html','dist/404.html')"
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
@@ -38,4 +39,3 @@ jobs:
     steps:
       - id: deployment
         uses: actions/deploy-pages@v4
-

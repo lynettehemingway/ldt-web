@@ -1,10 +1,11 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Animated,
   Easing,
   Image,
   Platform,
   Pressable,
+  SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
@@ -13,34 +14,33 @@ import {
 } from "react-native";
 import Svg, { Path } from "react-native-svg";
 import ColorSwatchRow from "../app/colorswatchrow";
-import { SideTag, Star } from "../app/decor";
 import Header, { HEADER_H } from "../app/header";
 
 const PURPLE = "#6f00ff";
-const PAPER = "#f6f1ea";
-const HERO_MARGIN_TOP = 12;
-const BREAKPOINT = 900;      // desktop breakpoint
-const TABLET_BP  = 600;      // tablet-ish
+const PAPER = "#f7f4f1ff";
 
-// ---------- Utils ----------
+// ---- breakpoints ----
+const BREAKPOINT = 900;     // desktop
+const TABLET_BP  = 680;     // tablet-ish
+const PHONE_BP   = 420;     // small phones
+
+// ---------- utils ----------
 function clamp(n: number, lo: number, hi: number) {
   return Math.max(lo, Math.min(n, hi));
 }
-
-/** scale a preferred size by window width, with min/max clamps */
 function rsize(winW: number, pref: number, min: number, max: number, base = 1200) {
   return clamp(pref * (winW / base), min, max);
 }
 
-// ---------- SVG chevrons (click/tap to scroll) ----------
+// ---------- svg chevrons ----------
 const AnimatedPath = Animated.createAnimatedComponent(Path);
 function ChevronsCue({
   color = PURPLE,
   visible = true,
   onPress,
-  inline = false,                  // inline: positions via containerStyle instead of bottom pin
-  bottom = 8,                      // only used if inline=false
-  size = 60,                       // overall height of SVG; width derived
+  inline = false,
+  bottom = 8,
+  size = 60,
   containerStyle,
 }: {
   color?: string;
@@ -80,7 +80,6 @@ function ChevronsCue({
     ).start();
   }, [op1, op2, op3, bob]);
 
-  // Keep aspect ratio similar to 28x60
   const svgH = size;
   const svgW = Math.round(size * (28 / 60));
 
@@ -100,37 +99,18 @@ function ChevronsCue({
         style={({ pressed }) => ({ transform: [{ scale: pressed ? 0.98 : 1 }] })}
       >
         <Svg width={svgW} height={svgH} viewBox="0 0 28 60" pointerEvents="none">
-          <AnimatedPath
-            d="M4 10 L14 20 L24 10"
-            stroke={color}
-            strokeWidth={3}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            fill="none"
-            opacity={op1 as unknown as number}
-          />
-          <AnimatedPath
-            d="M4 28 L14 38 L24 28"
-            stroke={color}
-            strokeWidth={3}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            fill="none"
-            opacity={op2 as unknown as number}
-          />
-          <AnimatedPath
-            d="M4 46 L14 56 L24 46"
-            stroke={color}
-            strokeWidth={3}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            fill="none"
-            opacity={op3 as unknown as number}
-          />
+          <AnimatedPath d="M4 10 L14 20 L24 10" stroke={color} strokeWidth={3} strokeLinecap="round" strokeLinejoin="round" fill="none" opacity={op1 as unknown as number} />
+          <AnimatedPath d="M4 28 L14 38 L24 28" stroke={color} strokeWidth={3} strokeLinecap="round" strokeLinejoin="round" fill="none" opacity={op2 as unknown as number} />
+          <AnimatedPath d="M4 46 L14 56 L24 46" stroke={color} strokeWidth={3} strokeLinecap="round" strokeLinejoin="round" fill="none" opacity={op3 as unknown as number} />
         </Svg>
       </Pressable>
     </Animated.View>
   );
+}
+
+// tiny star as text (no image dep)
+function StarText({ size = 18, style }: { size?: number; style?: any }) {
+  return <Text style={[{ fontSize: size, lineHeight: size, color: "#000" }, style]}>★</Text>;
 }
 
 // ---------- Home ----------
@@ -141,53 +121,51 @@ export default function Home() {
   const { width: winW, height: winH } = useWindowDimensions();
   const isTablet = winW >= TABLET_BP && winW < BREAKPOINT;
   const isMobile = winW < TABLET_BP;
+  const isPhone  = winW <= PHONE_BP;
 
-  // Responsive container max width
-  const HERO_MAX_W = useMemo(() => clamp(winW - 32, 980, 1280), [winW]);
+  const MAX_W = isMobile ? Math.min(640, winW - 16) : Math.min(1280, winW - 32);
+  const TOP_SPACER = Platform.OS === "web" ? HEADER_H : 0;
+  const HERO_MIN_VIEW = Math.max(560, winH - TOP_SPACER);
 
-  // Top spacer so fixed navbar (web) doesn’t overlap content
-  const TOP_SPACER = Platform.OS === "web" ? HEADER_H - 20 : 0;
-  const HERO_MIN = Math.max(winH - TOP_SPACER, 560); // minimum hero height
-
-  // Track hero size for proportional decor placement
   const [heroSize, setHeroSize] = useState({ w: 0, h: 0 });
+  const base = Math.min(heroSize.w || winW, MAX_W);
 
-  // Base width for scaling circle/lion (cap at hero max width)
-  const base = Math.min(heroSize.w || winW, HERO_MAX_W);
+  // spacing + type
+  const CARD_PAD_H = isPhone ? 12 : isMobile ? 14 : 16;
+  const CARD_PAD_V = isPhone ? 12 : isMobile ? 14 : 16;
+  const COL_GAP = isPhone ? 10 : isMobile ? 14 : isTablet ? 18 : 20;
 
-  // ---------- Responsive tokens ----------
-  const COL_GAP = isMobile ? 14 : isTablet ? 16 : 20;
-
-  const H1 = Math.round(rsize(winW, 48, 34, 64));     // h1 font size
+  const H1 = isPhone ? 28 : Math.round(rsize(winW, 48, 34, 64));
   const H1_LH = Math.round(H1 * 1.08);
-  const H1_THIN = Math.round(rsize(winW, 32, 22, 40));
-  const COPY_W = isMobile
-    ? Math.round(rsize(winW, 380, 300, 480))      // phones: small bump
-    : isTablet
-    ? Math.round(rsize(winW, 520, 460, 640))      // tablet
-    : Math.round(rsize(winW, 620, 520, 760));     // desktop
-  const CHEVRON_SIZE = Math.round(rsize(winW, 56, 42, 72)); // indicator height
+  const H1_THIN = isPhone ? 16 : Math.round(rsize(winW, 32, 22, 40));
+  const BODY = isPhone ? 14 : Math.round(rsize(winW, 16, 14, 18));
+  const BODY_LH = isPhone ? 21 : Math.round(BODY * 1.35);
+  const STAR = clamp(base * 0.045, 16, 28);
+  const CHEVRON_SIZE = Math.round(rsize(winW, 56, 42, 72));
 
-  // Circle & lion scale with container
-  const CIRCLE = clamp(base * 0.36, 220, 480);
-  const CIRCLE_LEFT = -CIRCLE * (isMobile ? 0.15 : 0.25);
-  const LION_H = clamp(base * 0.55, 300, 660);
-  const STAR = clamp(base * 0.05, 18, 50);
+  // *** Bigger mobile hero ***
 
-  // Image column aspect & behavior:
-  const IMAGE_RESIZE_MODE: "contain" | "cover" = "contain"; // Change to "cover" for bolder crop
+  const CIRCLE = clamp(base * (isPhone ? 0.95 : isMobile ? 0.70 : 0.40), 320, isPhone ? 560 : 560);
+  const LION_H = clamp(base * (isPhone ? 1.10 : isMobile ? 0.80 : 0.80), 420, 880);
 
-  // Smooth scroll to pillars
+  const IMAGE_RESIZE_MODE: "contain" | "cover" = "contain";
+
   const scrollToPillars = () => {
-    const y = Math.max(pillarsAnchorY.current - 16, 0);
+    const y = Math.max(pillarsAnchorY.current - 12, 0);
     scrollRef.current?.scrollTo({ y, animated: true });
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: PAPER }}>
+    <SafeAreaView
+      style={{
+        flex: 1,
+        backgroundColor: PAPER,
+        paddingTop: Platform.OS === "web" ? HEADER_H * 0.4 : 0,
+        marginTop: isPhone ? 20 : isMobile ? -40 : -150, // push down on phone, normal on desktop
+      }}
+    >
       <Header />
 
-      {/* Scrollable page content; header stays fixed on web */}
       <ScrollView
         ref={scrollRef}
         contentContainerStyle={{
@@ -195,24 +173,25 @@ export default function Home() {
           minHeight: winH - (Platform.OS === "web" ? 0 : HEADER_H),
           alignItems: "center",
           paddingBottom: 32,
+          paddingHorizontal: isPhone ? 8 : 12,
         }}
       >
-        {/* Spacer under fixed header (web only) */}
         {TOP_SPACER > 0 && <View style={{ height: TOP_SPACER }} />}
 
+        {/* hero card */}
         <View
           style={[
             styles.heroCard,
             {
-              marginTop: HERO_MARGIN_TOP,
-              minHeight: HERO_MIN,
-              flexDirection: isMobile ? "column" : "row",
-              alignItems: isMobile ? "center" : "stretch",
-              justifyContent: "center",
+              marginTop: isPhone ? 6 : 10,
+              minHeight: HERO_MIN_VIEW,
+              maxWidth: MAX_W,
+              paddingHorizontal: CARD_PAD_H,
+              paddingVertical: CARD_PAD_V,
               gap: COL_GAP,
-              maxWidth: HERO_MAX_W,
-              paddingHorizontal: isMobile ? 12 : 16,
-              paddingVertical: isMobile ? 12 : 16,
+              flexDirection: isMobile ? "column" : "row",
+              alignItems: "center",
+              justifyContent: "center",
             },
           ]}
           onLayout={(e) => {
@@ -220,167 +199,132 @@ export default function Home() {
             setHeroSize({ w: width, h: height });
           }}
         >
-          {/* LEFT: Image / lion */}
+          {/* IMAGE COLUMN */}
           <View
-            style={[
-              styles.leftCol,
-              {
-                flex: isMobile ? undefined : isTablet ? 1.05 : 1.15,
-                width: isMobile ? "100%" : undefined,
-                minHeight: Math.max(320, CIRCLE * (isMobile ? 1.0 : 0.85)),
-              },
-            ]}
+            style={{
+              width: isMobile ? "100%" : undefined,
+              flex: isMobile ? undefined : isTablet ? 1.05 : 1.15,
+              minHeight: Math.max(300, CIRCLE * (isMobile ? 1.2 : 0.85)),
+              alignItems: "center",
+              justifyContent: "center",
+            }}
           >
-            {/* Circle behind lion */}
+            {/* background circle */}
             <View
               style={{
                 position: "absolute",
                 width: CIRCLE,
                 height: CIRCLE,
                 borderRadius: CIRCLE / 2,
-                backgroundColor: "#eadfce",
-                left: isMobile ? "50%" : CIRCLE_LEFT,
-                top: isMobile ? 0 : "50%",
+                backgroundColor: "#eee7ddff",
+                left: "50%",
+                top: isMobile ? (isPhone ? 8 : 0) : "50%",
                 transform: isMobile
                   ? [{ translateX: -CIRCLE / 2 }]
-                  : [{ translateY: -CIRCLE / 2 }],
+                  : [{ translateX: -CIRCLE * 0.6 }, { translateY: -CIRCLE / 2 }],
                 zIndex: 0,
               }}
             />
-
-            {/* Lion image */}
+            {/* lion */}
             <Image
               source={require("../assets/images/lions.png")}
               style={{
-                width: isMobile ? CIRCLE * 0.9 : "100%",
-                height: isMobile ? CIRCLE * 0.9 : LION_H,
-                zIndex: 1,
+                width: isMobile ? CIRCLE * 1.05 : "100%",
+                height: isMobile ? CIRCLE * 1.05 : LION_H,
                 resizeMode: IMAGE_RESIZE_MODE,
+                zIndex: 1,
               }}
             />
           </View>
 
-          {/* RIGHT: heading/copy */}
+          {/* TEXT COLUMN */}
           <View
-            style={[
-              styles.rightCol,
-              {
-                flex: isMobile ? undefined : isTablet ? 1.2 : 1.35,
-                width: isMobile ? "100%" : undefined,
-                alignItems: isMobile ? "center" : "flex-start",
-                position: "relative", // for inline chevrons placement
-                paddingHorizontal: isMobile ? 4 : 8,
-                gap: isMobile ? 8 : 10,
-              },
-            ]}
+            style={{
+              width: isMobile ? "100%" : undefined,
+              flex: isMobile ? undefined : isTablet ? 1.2 : 1.35,
+              alignItems: isMobile ? "center" : "flex-start",
+              gap: isPhone ? 6 : 8,
+              position: "relative",
+            }}
           >
-            <View
-              style={[
-                styles.titleWrap,
-                { alignItems: isMobile ? "center" : "flex-start" },
-              ]}
-            >
-              <Text style={[styles.h1, { fontSize: H1, lineHeight: H1_LH }]}>
-                LION DANCE{"\n"}TEAM
+            <View style={{ alignItems: isMobile ? "center" : "flex-start", gap: 4 }}>
+              <Text style={[styles.h1, { fontSize: H1, lineHeight: H1_LH, textAlign: isMobile ? "center" : "left" }]}>
+                LION DANCE TEAM
               </Text>
 
-              <View style={styles.titleRow}>
-                <Text style={[styles.h1Thin, { fontSize: H1_THIN }]}>| AT UF</Text>
-                <Star
-                  style={{
-                    marginLeft: 8,
-                    width: STAR,
-                    height: STAR,
-                    transform: [{ translateY: 2 }],
-                    zIndex: 9,
-                  }}
-                />
+              <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+                <Text
+                  style={[
+                    styles.h1Thin,
+                    { fontSize: H1_THIN, textAlign: isMobile ? "center" : "left" },
+                  ]}
+                >
+                  at the University of Florida
+                </Text>
+                {!isPhone && <StarText size={STAR} style={{ marginLeft: 4, transform: [{ translateY: 2 }] }} />}
               </View>
             </View>
 
+            {/* body copy */}
             <Text
-              style={[
-                styles.copy,
-                {
-                  textAlign: isMobile ? "center" : "left",
-                  maxWidth: COPY_W,
-                  fontSize: Math.round(rsize(winW, 16, 14, 18)),
-                  lineHeight: Math.round(rsize(winW, 22, 20, 26)),
-                },
-              ]}
+              style={{
+                color: "#1a1a1a",
+                maxWidth: isMobile ? "92%" as any : Math.round(rsize(winW, 620, 520, 760)),
+                textAlign: isMobile ? "center" : "left",
+                fontSize: BODY,
+                lineHeight: BODY_LH,
+              }}
             >
-               Lion Dance Team (LDT) at the University of Florida is an organization open 
-               to students of all skill levels and backgrounds that aims to teach and promote 
-               the art of lion dancing. 
-               <p></p>We perform traditional and modern lion dance shows at UF, 
-               as well as in the greater Gainesville area, in order to entertain and spread this culture to the community. 
-               As a team, our goal is to foster artistic and individual growth in our dancers.
+              Lion Dance Team (LDT) at the University of Florida is an organization open to students of all skill
+              levels and backgrounds that aims to teach and promote the art of lion dancing.{"\n\n"}We perform
+              traditional and modern lion dance shows at UF, as well as in the greater Gainesville area, in order to
+              entertain and spread this culture to the community. As a team, our goal is to foster artistic and
+              individual growth in our dancers.
             </Text>
 
-            <View style={styles.carouselHint}>
-              <Text style={styles.chev}>◄</Text>
-              <Text style={styles.hanzi}>舞獅</Text>
-              <Text style={styles.chev}>►</Text>
-            </View>
-
-            {/* Chevrons indicator: inline, higher & to the right (next to text) */}
+            {/* chevrons — hide on the tiniest phones */}
             <ChevronsCue
               inline
               size={CHEVRON_SIZE}
               color={PURPLE}
-              visible={!isMobile}               // hide on small phones; show tablet/desktop
+              visible={!isMobile || (isMobile && !isPhone)}
               onPress={scrollToPillars}
-              containerStyle={{
-                alignSelf: "flex-end",          // push to the right edge of the text column
-                marginTop: 10,                   // slightly lower than the body copy
-                marginRight: 4,                  // a smidge in from the right edge
-              }}
+              containerStyle={{ alignSelf: isMobile ? "center" : "flex-end", marginTop: 8, marginRight: 2 }}
             />
           </View>
-
-          {/* DECOR — placed last so it's on top */}
-          {!isMobile && <SideTag style={styles.sideTagOverride} />}
         </View>
 
-        {/* Invisible anchor to compute Y for smooth scroll */}
+        {/* scroll target anchor */}
+        <View onLayout={(e) => (pillarsAnchorY.current = e.nativeEvent.layout.y)} />
         <View
-          onLayout={(e) => {
-            pillarsAnchorY.current = e.nativeEvent.layout.y;
+          style={{
+            width: "90%",
+            maxWidth: 1200,
+            alignSelf: "center",
+            height: 2,
+            backgroundColor: "rgba(0,0,0,0.1)", // light neutral line
+            marginTop: 32,
+            marginBottom: 24,
+            borderRadius: 999,
           }}
         />
 
-        {/* Pillars section */}
+
+        {/* pillars */}
         <ColorSwatchRow />
 
-        {/* Extra space under pillars (responsive) */}
-        <View style={{ height: isMobile ? 80 : isTablet ? 100 : 140 }} />
+        <View style={{ height: isMobile ? 60 : 100 }} />
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  page: {
-    backgroundColor: PAPER,
-    paddingVertical: 32,
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
   heroCard: {
     width: "100%",
     backgroundColor: PAPER,
-    borderRadius: 10,
-    position: "relative",
-    overflow: "visible", // decor can hang outside
-  },
-
-  leftCol: {
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: 1,
-  },
-  rightCol: {
-    justifyContent: "center",
+    borderRadius: 12,
+    overflow: "visible",
   },
 
   h1: {
@@ -388,28 +332,11 @@ const styles = StyleSheet.create({
     fontWeight: "900",
     letterSpacing: 1,
   },
-  h1Thin: { color: "#161616", fontWeight: "700" },
-  copy: { color: "#1a1a1a" },
 
-  carouselHint: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    marginTop: 8,
+  h1Thin: {
+    color: "#161616",
+    fontWeight: "800",
+    letterSpacing: 0.2,
   },
-  hanzi: { fontWeight: "900", color: "#1a1a1a" },
-  chev: { color: "#1a1a1a", marginHorizontal: 2 },
-
-  // SideTag placement
-  sideTagOverride: {
-    position: "absolute",
-    left: -48,
-    top: "50%",
-    transform: [{ rotate: "-90deg" }],
-    zIndex: 5,
-    elevation: 5, // Android stacking
-  },
-
-  titleWrap: { gap: 4 },
-  titleRow: { flexDirection: "row", alignItems: "center" },
 });
+
