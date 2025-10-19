@@ -22,7 +22,7 @@ const h = require("../assets/media/one.png");
 const BRAND_SERIF =
   Platform.OS === "web" ? "var(--brand-serif, Georgia, serif)" : "serif";
 
-const PAPER = "#f6f1ea";
+const PAPER = "#f7f4f1ff";
 const INK = "#161616";
 const ACCENT = "#d9cdbb";
 const PURPLE = "#6f00ff";

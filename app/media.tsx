@@ -16,7 +16,7 @@ import {
 import Header, { HEADER_H } from "../app/header";
 
 /** ---- Theme ---- */
-const PAPER = "#f6f1ea";
+const PAPER = "#f7f4f1ff";
 const INK = "#161616";
 const ACCENT = "#d9cdbb";
 const PURPLE = "#6f00ff";
