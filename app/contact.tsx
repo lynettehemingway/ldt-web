@@ -14,11 +14,11 @@ const ACCENT = "#d9cdbb";
 const INK = "#161616";
 const PURPLE = "#6f00ff";
 
-const IG_URL   = "https://www.instagram.com/uf.ldt/"; 
-const EMAIL_TO = "ufliondanceteam@gmail.com";                
+const IG_URL = "https://www.instagram.com/uf.ldt/";
+const EMAIL_TO = "ufliondanceteam@gmail.com";
 
 export default function Contact() {
-  const { width, height } = useWindowDimensions();
+  const { width } = useWindowDimensions();
   const topPad = Platform.OS === "web" ? HEADER_H : 0;
 
   // responsive sizing
@@ -34,24 +34,21 @@ export default function Contact() {
 
       <View style={[styles.wrap, { paddingTop: topPad }]}>
         <View style={[styles.card, { maxWidth: CARD_W }]}>
-          <Text style={[styles.h1, { fontSize: H1, lineHeight: H1_LH }]}>CONTACT</Text>
+          <Text style={[styles.h1, { fontSize: H1, lineHeight: H1_LH }]}>
+            CONTACT
+          </Text>
           <Text style={[styles.copy, { fontSize: P, lineHeight: P_LH }]}>
             Reach out for{" "}
-            <Text style={styles.bold}>performances, collaborations, or sponsorship opportunities</Text>.
+            <Text style={styles.bold}>
+              performances, collaborations, or sponsorship opportunities
+            </Text>
+            .
           </Text>
 
           {/* CTA Buttons */}
           <View style={styles.btnRow}>
-            <CTA
-              label="Instagram"
-              onPress={() => openURL(IG_URL)}
-              hint="@uf.ldt"
-            />
-            <CTA
-              label="Email Us"
-              onPress={() => email(EMAIL_TO)}
-              hint={EMAIL_TO}
-            />
+            <CTA label="Instagram" onPress={() => openURL(IG_URL)} hint="@uf.ldt" />
+            <CTA label="Email Us" onPress={() => email(EMAIL_TO)} hint={EMAIL_TO} />
             <CTA
               label="Sponsor Us"
               onPress={() =>
@@ -91,13 +88,24 @@ export default function Contact() {
 }
 
 // ---------- small building blocks ----------
-function CTA({ label, hint, onPress }: { label: string; hint?: string; onPress: () => void }) {
+function CTA({
+  label,
+  hint,
+  onPress,
+}: {
+  label: string;
+  hint?: string;
+  onPress: () => void;
+}) {
   return (
     <Pressable
       onPress={onPress}
       style={({ pressed }) => [
         styles.btn,
-        { borderColor: pressed ? PURPLE : ACCENT, transform: [{ scale: pressed ? 0.98 : 1 }] },
+        {
+          borderColor: pressed ? PURPLE : ACCENT,
+          transform: [{ scale: pressed ? 0.98 : 1 }],
+        },
       ]}
       accessibilityRole="button"
       accessibilityLabel={label}
@@ -119,17 +127,28 @@ function Info({ title, children }: { title: string; children: React.ReactNode })
 
 // ---------- helpers ----------
 function openURL(url: string) {
-  // dynamic import to avoid SSR issues on web
-  import("react-native").then(({ Linking }) => Linking.openURL(url));
+  if (Platform.OS === "web") {
+    window.open(url, "_blank");
+  } else {
+    import("react-native").then(({ Linking }) => Linking.openURL(url));
+  }
 }
+
 function email(to: string, subject?: string, body?: string) {
   const s = subject ? `?subject=${encodeURIComponent(subject)}` : "";
   const b = body ? `${subject ? "&" : "?"}body=${body}` : "";
-  openURL(`mailto:${to}${s}${b}`);
+  const link = `mailto:${to}${s}${b}`;
+  if (Platform.OS === "web") {
+    window.location.href = link;
+  } else {
+    import("react-native").then(({ Linking }) => Linking.openURL(link));
+  }
 }
+
 function scale(winW: number, pref: number, min: number, max: number, base = 1200) {
   return clamp(pref * (winW / base), min, max);
 }
+
 function clamp(n: number, lo: number, hi: number) {
   return Math.max(lo, Math.min(n, hi));
 }
