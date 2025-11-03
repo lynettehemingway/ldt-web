@@ -1,11 +1,11 @@
 import React from "react";
 import {
-    Platform,
-    Pressable,
-    StyleSheet,
-    Text,
-    View,
-    useWindowDimensions,
+  Platform,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+  useWindowDimensions,
 } from "react-native";
 import Header, { HEADER_H } from "./header";
 
@@ -62,14 +62,13 @@ export default function Contact() {
                     "",
                     "Best,",
                     "",
-                  ].join("%0D%0A")
+                  ].join("\n")
                 )
               }
               hint="Packages / Deck"
             />
           </View>
 
-          {/* Fast facts / secondary info */}
           <View style={styles.infoGrid}>
             <Info title="Response Time">
               typically within 24–48 hours during the semester!
@@ -87,7 +86,6 @@ export default function Contact() {
   );
 }
 
-// ---------- small building blocks ----------
 function CTA({
   label,
   hint,
@@ -125,7 +123,6 @@ function Info({ title, children }: { title: string; children: React.ReactNode })
   );
 }
 
-// ---------- helpers ----------
 function openURL(url: string) {
   if (Platform.OS === "web") {
     window.open(url, "_blank");
@@ -134,16 +131,23 @@ function openURL(url: string) {
   }
 }
 
-function email(to: string, subject?: string, body?: string) {
-  const s = subject ? `?subject=${encodeURIComponent(subject)}` : "";
-  const b = body ? `${subject ? "&" : "?"}body=${body}` : "";
-  const link = `mailto:${to}${s}${b}`;
+function email(to: string, subject = "", body = "") {
+  const mailto = (() => {
+    const params: string[] = [];
+    if (subject) params.push(`subject=${encodeURIComponent(subject)}`);
+    if (body) params.push(`body=${encodeURIComponent(body)}`);
+    return `mailto:${encodeURIComponent(to)}${params.length ? "?" + params.join("&") : ""}`;
+  })();
+
   if (Platform.OS === "web") {
-    window.location.href = link;
-  } else {
-    import("react-native").then(({ Linking }) => Linking.openURL(link));
+    const gmail = `https://mail.google.com/mail/?extsrc=mailto&url=${encodeURIComponent(mailto)}`;
+    window.open(gmail, "_blank");
+    return;
   }
+
+  import("react-native").then(({ Linking }) => Linking.openURL(mailto));
 }
+
 
 function scale(winW: number, pref: number, min: number, max: number, base = 1200) {
   return clamp(pref * (winW / base), min, max);

@@ -146,7 +146,7 @@ export default function Home() {
   // *** Bigger mobile hero ***
 
   const CIRCLE = clamp(base * (isPhone ? 0.95 : isMobile ? 0.70 : 0.40), 320, isPhone ? 560 : 560);
-  const LION_H = clamp(base * (isPhone ? 1.10 : isMobile ? 0.80 : 0.80), 420, 880);
+  const LION_H = clamp(base * (isPhone ? 1.10 : isMobile ? 0.60 : 0.40), 900, 900);
 
   const IMAGE_RESIZE_MODE: "contain" | "cover" = "contain";
 
@@ -203,7 +203,7 @@ export default function Home() {
           <View
             style={{
               width: isMobile ? "100%" : undefined,
-              flex: isMobile ? undefined : isTablet ? 1.05 : 1.15,
+              flex: isMobile ? undefined : isTablet ? 1.15 : 1.35,
               minHeight: Math.max(300, CIRCLE * (isMobile ? 1.2 : 0.85)),
               alignItems: "center",
               justifyContent: "center",
@@ -229,7 +229,7 @@ export default function Home() {
             <Image
               source={require("../assets/images/lions.png")}
               style={{
-                width: isMobile ? CIRCLE * 1.05 : "100%",
+                width: isMobile ? CIRCLE * 2.70 : "100%",
                 height: isMobile ? CIRCLE * 1.05 : LION_H,
                 resizeMode: IMAGE_RESIZE_MODE,
                 zIndex: 1,

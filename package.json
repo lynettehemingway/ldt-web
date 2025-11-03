@@ -8,8 +8,7 @@
     "build:web": "expo export --platform web --output-dir dist",
     "predeploy": "node -e \"require('fs').copyFileSync('dist/index.html','dist/404.html')\"",
     "deploy": "gh-pages -d dist",
-    git add package.json
-"start": "expo start --web",
+    "start": "expo start --web",
     "build": "expo export --platform web --output-dir dist",
     "clean": "rimraf dist"
   },

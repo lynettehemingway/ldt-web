@@ -32,6 +32,33 @@ const GALLERIES: {
   folderId: string;
   slideIds?: string[];
 }[] = [
+      {
+    title: "FSU Mid Autumn • 2025",
+    folderId: "1eMI5Lj6xgADv22jmFqj24OyCb7VUloNl",
+    slideIds: [
+      "1w3vHfXULOLZiKdjeTo4qVCAYs_OQu2eZ",
+      "1iZx1h6-JYVBndmddnWbmRrQloJSrFE9D",
+      "1rHtvPtD5Jth8QKrKGiihMvrobL8f9vxh",
+    ],
+  },
+    {
+    title: "CASA Mid Autumn • 2025",
+    folderId: "1OyhA6QCnd6aKUxFII77dEwTTcYI7sJlM",
+    slideIds: [
+      "1Dx5hPibWxdB6nvewRhcZMrpUFtGLX88e",
+      "1gAXyphJTBG0TC0tejPIqSuEr4ND4NvPC",
+      "1NMi_qD_nIN5er223Hx8dYnf4U2IZUb9T",
+    ],
+  },
+    {
+    title: "TTT • 2025",
+    folderId: "1FBr2_hmkOVPy8owbBjT4W4s7GJW2fzX5",
+    slideIds: [
+      "1T1PH6RV4AWdFisxjIMREX-Nh5--FW6Wu",
+      "15Z9AS8mOl1nJ72LKwtcy5wuBe_KlJPL_",
+      "1vvz-Lst1C2-0YOQ6IEIHb_ZqPGvfufXN",
+    ],
+  },
   {
     title: "LDT x CASA x VSO Workshop • 09/05/2025",
     folderId: "1Rb-zR2zjL39yStZnq8Q2JMym1izlA9Ho",
@@ -53,6 +80,7 @@ const GALLERIES: {
     folderId: "1O5ZQpwQhO9gU8uqNmxGD7W3HNkYPZOwN",
     slideIds: ["1nnyt4WmVuM2-nILvoxTFng3xB6TUxADO"],
   },
+  
 ];
 
 /** Build multiple cookie-free-ish candidates for each Drive file ID.
@@ -295,7 +323,7 @@ function HeroCollage({ slides }: { slides: Slide[] }) {
     });
   }, [slides]);
 
-  const cols: Array<{ i: number; h: number }>[] = Array.from(
+  const cols: { i: number; h: number }[][] = Array.from(
     { length: columns },
     () => []
   );
