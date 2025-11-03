@@ -15,6 +15,7 @@ import {
 import Svg, { Path } from "react-native-svg";
 import ColorSwatchRow from "../app/colorswatchrow";
 import Header, { HEADER_H } from "../app/header";
+import ScreenContainer from "./screen_container";
 
 const PURPLE = "#6f00ff";
 const PAPER = "#f7f4f1ff";
@@ -88,6 +89,7 @@ function ChevronsCue({
     : { position: "absolute" as const, left: 0, right: 0, bottom, alignItems: "center" as const };
 
   return (
+    <ScreenContainer>
     <Animated.View
       style={[baseStyle, { transform: [{ translateY: bob }], zIndex: 20, elevation: 20 }, containerStyle]}
     >
@@ -105,6 +107,7 @@ function ChevronsCue({
         </Svg>
       </Pressable>
     </Animated.View>
+    </ScreenContainer>
   );
 }
 

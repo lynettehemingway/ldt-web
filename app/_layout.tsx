@@ -8,9 +8,15 @@ import ContactDock from "./contact_dock";
 export default function RootLayout() {
   return (
     <SafeAreaProvider>
-      <Stack screenOptions={{ headerShown: false }} />
+      <StatusBar style={Platform.OS === "ios" ? "dark" : "auto"} />
+      <Stack
+        screenOptions={{
+          headerShown: false,                 // we use our own header per screen
+          contentStyle: { backgroundColor: "#f7f4f1ff" },
+        }}
+      />
+      {/* floating chat / contact button that sits above all screens */}
       <ContactDock />
-      <StatusBar style={Platform.OS === "web" ? "dark" : "light"} />
     </SafeAreaProvider>
   );
 }

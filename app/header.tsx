@@ -119,7 +119,7 @@ export default function Header() {
         {/* left: logo + title */}
         <Link href="/" asChild>
           <Pressable style={styles.logoWrap} onPress={() => setMenuOpen(false)}>
-            <Image source={require("../assets/images/logo.png")} style={styles.logo} />
+            <Image source={require("../assets/images/logotransparent.png")} style={styles.logo} />
             <View>
               <Text style={[styles.title, { fontFamily: BRAND_SERIF }]}>Lion Dance Team</Text>
               <Text style={styles.subtitle}>at the University of Florida</Text>
