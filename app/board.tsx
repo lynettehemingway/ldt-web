@@ -469,7 +469,7 @@ export default function Board() {
           BOARD MEMBERS
         </Text>
         <Text style={[styles.copyCenter, { fontSize: COPY_SIZE, lineHeight: COPY_LH }]}>
-          The board leads our team with dedication, creativity, and a passion for lion dance.
+          Meet our team.
         </Text>
       </View>
     )}

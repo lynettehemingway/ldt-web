@@ -122,7 +122,7 @@ export default function MediaPage() {
       >
         <View style={[styles.container, styles.pageHeader]}>
           <Text style={styles.h1}>MEDIA</Text>
-          <Text style={[styles.kicker, { fontSize: KICKER_SIZE }]}>
+          <Text style={[styles.kicker, { fontSize: KICKER_SIZE , alignContent: "center"}]}>
             Performances, workshops, and behind-the-scenes
           </Text>
         </View>

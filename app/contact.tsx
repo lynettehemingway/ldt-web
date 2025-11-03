@@ -1,3 +1,4 @@
+// app/contact.tsx
 import React from "react";
 import {
   Platform,
@@ -28,15 +29,24 @@ export default function Contact() {
   const P_LH = Math.round(P * 1.5);
   const CARD_W = Math.min(980, width - 32);
 
+  const stackButtons = width <= 420;
+
   return (
-    <View style={{ flex: 1, backgroundColor: PAPER }}>
+    <View
+      style={{
+        flex: 1,
+        backgroundColor: PAPER,
+        ...(Platform.OS === "web" ? ({ overflowX: "hidden" } as const) : {}),
+      }}
+    >
       <Header />
 
-      <View style={[styles.wrap, { paddingTop: topPad }]}>
+      <View style={[styles.wrap, { paddingTop: topPad, paddingBottom: 80 }]}>
         <View style={[styles.card, { maxWidth: CARD_W }]}>
           <Text style={[styles.h1, { fontSize: H1, lineHeight: H1_LH }]}>
             CONTACT
           </Text>
+
           <Text style={[styles.copy, { fontSize: P, lineHeight: P_LH }]}>
             Reach out for{" "}
             <Text style={styles.bold}>
@@ -46,7 +56,12 @@ export default function Contact() {
           </Text>
 
           {/* CTA Buttons */}
-          <View style={styles.btnRow}>
+          <View
+            style={[
+              styles.btnRow,
+              { flexDirection: stackButtons ? "column" : "row" },
+            ]}
+          >
             <CTA label="Instagram" onPress={() => openURL(IG_URL)} hint="@uf.ldt" />
             <CTA label="Email Us" onPress={() => email(EMAIL_TO)} hint={EMAIL_TO} />
             <CTA
@@ -69,6 +84,7 @@ export default function Contact() {
             />
           </View>
 
+          {/* Fast facts / secondary info */}
           <View style={styles.infoGrid}>
             <Info title="Response Time">
               typically within 24–48 hours during the semester!
@@ -86,6 +102,7 @@ export default function Contact() {
   );
 }
 
+// ---------- small building blocks ----------
 function CTA({
   label,
   hint,
@@ -123,6 +140,7 @@ function Info({ title, children }: { title: string; children: React.ReactNode })
   );
 }
 
+// ---------- helpers ----------
 function openURL(url: string) {
   if (Platform.OS === "web") {
     window.open(url, "_blank");
@@ -131,23 +149,27 @@ function openURL(url: string) {
   }
 }
 
+// gmail compose bridge on web + proper encoding
 function email(to: string, subject = "", body = "") {
   const mailto = (() => {
     const params: string[] = [];
     if (subject) params.push(`subject=${encodeURIComponent(subject)}`);
     if (body) params.push(`body=${encodeURIComponent(body)}`);
-    return `mailto:${encodeURIComponent(to)}${params.length ? "?" + params.join("&") : ""}`;
+    return `mailto:${encodeURIComponent(to)}${
+      params.length ? "?" + params.join("&") : ""
+    }`;
   })();
 
   if (Platform.OS === "web") {
-    const gmail = `https://mail.google.com/mail/?extsrc=mailto&url=${encodeURIComponent(mailto)}`;
+    const gmail = `https://mail.google.com/mail/?extsrc=mailto&url=${encodeURIComponent(
+      mailto
+    )}`;
     window.open(gmail, "_blank");
     return;
   }
 
   import("react-native").then(({ Linking }) => Linking.openURL(mailto));
 }
-
 
 function scale(winW: number, pref: number, min: number, max: number, base = 1200) {
   return clamp(pref * (winW / base), min, max);
@@ -160,10 +182,9 @@ function clamp(n: number, lo: number, hi: number) {
 // ---------- styles ----------
 const styles = StyleSheet.create({
   wrap: {
-    minHeight: "100%",
+    flexGrow: 1,             // avoids extra scroll on short phones
     alignItems: "center",
-    paddingHorizontal: 16,
-    paddingBottom: 40,
+    paddingHorizontal: 12,   // tighter on small devices
   },
   card: {
     width: "100%",
@@ -180,10 +201,10 @@ const styles = StyleSheet.create({
   bold: { fontWeight: "900" },
 
   btnRow: {
-    flexDirection: "row",
     flexWrap: "wrap",
     gap: 12,
     marginTop: 6,
+    alignSelf: "stretch",
   },
   btn: {
     backgroundColor: PAPER,
@@ -191,7 +212,8 @@ const styles = StyleSheet.create({
     borderColor: ACCENT,
     paddingHorizontal: 14,
     paddingVertical: 12,
-    borderRadius: 999,
+    borderRadius: 16,
+    alignSelf: "stretch", // full-width in column layout
   },
   btnLabel: { color: INK, fontWeight: "900", letterSpacing: 0.3 },
   btnHint: { color: INK, opacity: 0.8, marginTop: 2, fontSize: 12 },
