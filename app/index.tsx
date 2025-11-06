@@ -129,7 +129,7 @@ export default function Home() {
   const isPhone  = winW <= PHONE_BP;
 
   const MAX_W = isMobile ? Math.min(640, winW - 16) : Math.min(1280, winW - 32);
-  const TOP_SPACER = Platform.OS === "web" ? 0 : HEADER_H;
+  const TOP_SPACER = Platform.OS === "web" && winW >= BREAKPOINT ? HEADER_H : 0;
   const HERO_MIN_VIEW = Math.max(560, winH - TOP_SPACER);
 
   const [heroSize, setHeroSize] = useState({ w: 0, h: 0 });
