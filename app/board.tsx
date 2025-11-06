@@ -189,14 +189,14 @@ function ChevronsCue({
   bottom?: number;
   size?: number;
 }) {
-  if (!visible) return null;
-
   const op1 = useRef(new Animated.Value(0.25)).current;
   const op2 = useRef(new Animated.Value(0.25)).current;
   const op3 = useRef(new Animated.Value(0.25)).current;
   const bob = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
+    if (!visible) return;
+
     const pulse = (v: Animated.Value, delay: number) =>
       Animated.loop(
         Animated.sequence([
@@ -226,7 +226,9 @@ function ChevronsCue({
         }),
       ])
     ).start();
-  }, [op1, op2, op3, bob]);
+  }, [op1, op2, op3, bob, visible]);
+
+  if (!visible) return null;
 
   const svgH = size;
   const svgW = Math.round(size * (28 / 60));
