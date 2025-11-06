@@ -276,7 +276,7 @@ export default function Board() {
   const { width: winW, height: winH } = useWindowDimensions();
   const isTablet = winW >= TABLET_BP && winW < BREAKPOINT;
   const isMobile = winW < TABLET_BP;
-  const showHeroPhoto = !isMobile;
+  const showHeroPhoto = !isMobile; // hide the big hero on phones
 
   const HERO_MAX_W = useMemo(() => clamp(winW - 32, 980, 1400), [winW]);
   const headerOffset = Platform.OS === "web" ? HEADER_H : 0;
@@ -496,7 +496,7 @@ export default function Board() {
               width: "100%",
               maxWidth: cardContainerMax,
               flexDirection: "row",
-              justifyContent: "flex-start",
+              justifyContent: "space-between",
               gap: gutter,
               marginBottom: gutter,
               alignItems: "stretch",
@@ -517,7 +517,8 @@ function MemberCard({ member, cardWidth }: { member: Member; cardWidth: number }
   const mainSrc = (PHOTOS as any)[member.id]?.main ?? require("../assets/images/lions.png");
   const altSrc = (PHOTOS as any)[member.id]?.alt ?? mainSrc;
 
-  const altOp = useRef(new Animated.Value(0)).current;
+  // keep both mounted and crossfade
+  const altOp = useRef(new Animated.Value(0)).current; // 0 main, 1 alt
   const FADE_MS = 180;
 
   const showAlt = () =>
@@ -536,16 +537,16 @@ function MemberCard({ member, cardWidth }: { member: Member; cardWidth: number }
       useNativeDriver: true,
     }).start();
 
+  // prefetch if any are remote urls (require() is already bundled)
   useEffect(() => {
     if (typeof altSrc === "string") Image.prefetch(altSrc);
     if (typeof mainSrc === "string") Image.prefetch(mainSrc);
   }, [altSrc, mainSrc]);
 
   const a11y = `${member.name} — ${member.role}`;
-  const PHOTO_H = Math.round(cardWidth * (5 / 4));
 
   return (
-    <View style={[styles.card, { width: cardWidth, flexBasis: cardWidth, flexShrink: 0, flexGrow: 0 }]}>
+    <View style={[styles.card, { width: cardWidth }]}>
       <Pressable
         onPress={() => {
           altOp.stopAnimation((v) => (v < 0.5 ? showAlt() : showMain()));
@@ -553,7 +554,7 @@ function MemberCard({ member, cardWidth }: { member: Member; cardWidth: number }
         onHoverIn={showAlt}
         onHoverOut={showMain}
       >
-        <View style={[styles.photoWrap, { height: PHOTO_H }]}>
+        <View style={styles.photoWrap}>
           {/* base layer */}
           <Image source={mainSrc} style={[styles.photo, StyleSheet.absoluteFillObject]} accessible accessibilityLabel={a11y} />
           {/* alt layer */}
@@ -687,10 +688,12 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     borderWidth: 2,
     borderColor: ACCENT,
+    flex: 1,
   },
   photoWrap: {
     position: "relative",
     width: "100%",
+    aspectRatio: 4 / 5,
     backgroundColor: "#eadfce",
     overflow: "hidden",
   },
