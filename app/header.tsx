@@ -201,14 +201,14 @@ const styles = StyleSheet.create({
   logoWrap: { flexDirection: "row", alignItems: "center", gap: 12 },
   logo: { width: 70, height: 70, resizeMode: "contain" },
 title: {
-  fontSize: 20,
+  fontSize: 28,
   color: "#000",
   lineHeight: 30,
   fontWeight: "900",
 },
 
 titlePhone: {
-  fontSize: 20,
+  fontSize: 16,
   lineHeight: 22,
 },
 
