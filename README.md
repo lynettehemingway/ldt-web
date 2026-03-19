@@ -1,4 +1,4 @@
-# Welcome to the UF Lion Dance Team App 🦁👋
+# Welcome to the UF Lion Dance Team Website!🦁👋
 
 This is a [Expo](https://expo.dev) website for the **University of Florida Lion Dance Team (LDT)**, built to support members by sharing updates and showcase performances. Rah.
 
