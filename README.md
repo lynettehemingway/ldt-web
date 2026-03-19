@@ -1,22 +1,25 @@
-# Welcome to your Expo app 👋
+# Welcome to the UF Lion Dance Team App 🦁👋
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+This is an [Expo](https://expo.dev) project for the **University of Florida Lion Dance Team (LDT)**, built to support members, share updates, and showcase performances.
 
 ## Get started
 
 1. Install dependencies
 
-   ```bash
-   npm install
-   ```
+```bash
+npm install
 
 2. Start the web
+```bash
+npm run web
 
-   ```bash
-   npm run web
-   ```
+**## About**
+The UF Lion Dance Team is a student organization dedicated to teaching and performing lion dance while building community and celebrating culture.
 
-Resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+**## Features**
+📅 View upcoming practices, socials, and performances
+📢 Receive announcements and updates
+👥 Connect with members
+🦁 Learn lion dance basics and choreography
+🎥 Explore past performances
+(like this)
