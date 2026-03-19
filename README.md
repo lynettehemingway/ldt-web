@@ -14,11 +14,11 @@ npm install
 npm run web
 ```
 ## About
-The UF Lion Dance Team is a student organization dedicated to teaching and performing lion dance while building community and celebrating culture.
+The UF Lion Dance Team is a student organization dedicated to teaching and performing lion dance while building community and celebrating culture. You can view our website at [ufldt.com](https://www.ufldt.com/).
 
 ## Features
-📅 View upcoming practices, socials, and performances
-📢 Receive announcements and updates
-👥 Connect with members
-🦁 Learn lion dance basics and choreography
-🎥 Explore past performances
+- 📅 View upcoming practices, socials, and performances
+- 📢 Receive announcements and updates
+- 👥 Connect with members
+- 🦁 Learn lion dance basics and choreography
+- 🎥 Explore past performances
