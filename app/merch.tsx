@@ -102,7 +102,7 @@ export default function MerchPage() {
         {/* Page Title */}
         <View style={[s.pageHeader, s.container]}>
           <Text style={[s.pageHeaderTitle, { textAlign: "center", width: "100%" }]}>LDT MERCH</Text>
-          <Text style={[s.kicker, { fontSize: KICKER_SIZE, marginTop: 6, textAlign: "center" }]}>Rep our team. Coming soon!</Text>
+          <Text style={[s.kicker, { fontSize: KICKER_SIZE, marginTop: 6, textAlign: "center" }]}> Rah, Coming soon!</Text>
         </View>
 
         {/* Toolbar */}

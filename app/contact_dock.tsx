@@ -5,17 +5,17 @@ import { Feather, FontAwesome5, MaterialCommunityIcons } from "@expo/vector-icon
 import * as Linking from "expo-linking";
 import React, { useMemo, useState } from "react";
 import {
-    ActivityIndicator,
-    KeyboardAvoidingView,
-    Modal,
-    Platform,
-    Pressable,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    View,
-    useWindowDimensions,
+  ActivityIndicator,
+  KeyboardAvoidingView,
+  Modal,
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+  useWindowDimensions,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 

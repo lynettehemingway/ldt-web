@@ -189,14 +189,14 @@ function ChevronsCue({
   bottom?: number;
   size?: number;
 }) {
-  if (!visible) return null;
-
   const op1 = useRef(new Animated.Value(0.25)).current;
   const op2 = useRef(new Animated.Value(0.25)).current;
   const op3 = useRef(new Animated.Value(0.25)).current;
   const bob = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
+    if (!visible) return;
+
     const pulse = (v: Animated.Value, delay: number) =>
       Animated.loop(
         Animated.sequence([
@@ -226,7 +226,9 @@ function ChevronsCue({
         }),
       ])
     ).start();
-  }, [op1, op2, op3, bob]);
+  }, [op1, op2, op3, bob, visible]);
+
+  if (!visible) return null;
 
   const svgH = size;
   const svgW = Math.round(size * (28 / 60));
@@ -276,6 +278,7 @@ export default function Board() {
   const { width: winW, height: winH } = useWindowDimensions();
   const isTablet = winW >= TABLET_BP && winW < BREAKPOINT;
   const isMobile = winW < TABLET_BP;
+  const showHeroPhoto = !isMobile; // hide the big hero on phones
 
   const HERO_MAX_W = useMemo(() => clamp(winW - 32, 980, 1400), [winW]);
   const headerOffset = Platform.OS === "web" ? HEADER_H : 0;
@@ -359,97 +362,125 @@ export default function Board() {
           gap: 12,
         }}
         ListHeaderComponent={
-          <>
-            <View
+  <>
+    {showHeroPhoto ? (
+      // desktop / tablet: full hero with photo + text
+      <View
+        style={[
+          styles.heroCard,
+          {
+            minHeight: heroMinH,
+            maxWidth: HERO_MAX_W,
+            padding: isMobile ? 16 : 20,
+            gap: isMobile ? 14 : 16,
+          },
+        ]}
+      >
+        <View
+          style={{
+            width: "100%",
+            flexDirection: isWideHero ? "row" : "column",
+            alignItems: isWideHero ? "stretch" : "center",
+            justifyContent: isWideHero ? "space-between" : "center",
+            gap: COL_GAP,
+          }}
+        >
+          {/* left: group photo */}
+          <View
+            style={[
+              styles.groupWrap,
+              isWideHero
+                ? { width: IMG_W, height: IMG_H, alignSelf: "center", flexShrink: 0 }
+                : { width: "100%" },
+            ]}
+          >
+            <Image
+              source={GROUP_SRC}
+              style={
+                isWideHero
+                  ? { width: "100%", height: "100%" }
+                  : [styles.groupImage, { aspectRatio: GROUP_AR_MOBILE, maxHeight: heroViewportH - 24 }]
+              }
+              resizeMode={IMAGE_MODE}
+              accessible
+              accessibilityLabel="UF Lion Dance Team — Board group photo"
+            />
+            <View style={styles.groupCaptionPill}>
+              <Text style={styles.groupCaptionText}>Board 2025–26</Text>
+            </View>
+          </View>
+
+          {/* right: title block */}
+          <View
+            style={{
+              ...(isWideHero ? { flex: 1 } : { width: "100%" }),
+              alignItems: isWideHero ? "flex-start" : "center",
+              justifyContent: "center",
+              gap: 8,
+              minWidth: 0,
+              flexBasis: 0,
+              flexGrow: 1,
+              paddingRight: 0,
+              position: "relative",
+              paddingBottom: isWideHero ? 36 : 0,
+            }}
+          >
+            <Text style={[styles.kicker, { fontSize: KICKER_SIZE }]}>
+              UF LION DANCE TEAM 2025–2026
+            </Text>
+            <Text style={[styles.h1, { fontSize: H1, lineHeight: H1_LH }]}>
+              BOARD MEMBERS
+            </Text>
+            <Text
               style={[
-                styles.heroCard,
-                {
-                  minHeight: heroMinH,
-                  maxWidth: HERO_MAX_W,
-                  padding: isMobile ? 16 : 20,
-                  gap: isMobile ? 14 : 16,
-                },
+                styles.copyCenter,
+                { textAlign: isWideHero ? "left" : "center", fontSize: COPY_SIZE, lineHeight: COPY_LH },
               ]}
             >
-              <View
-                style={{
-                  width: "100%",
-                  flexDirection: isWideHero ? "row" : "column",
-                  alignItems: isWideHero ? "stretch" : "center",
-                  justifyContent: isWideHero ? "space-between" : "center",
-                  gap: COL_GAP,
-                }}
-              >
-                {/* left: group photo */}
-                <View
-                  style={[
-                    styles.groupWrap,
-                    isWideHero
-                      ? { width: IMG_W, height: IMG_H, alignSelf: "center", flexShrink: 0 }
-                      : { width: "100%" },
-                  ]}
-                >
-                  <Image
-                    source={GROUP_SRC}
-                    style={
-                      isWideHero
-                        ? { width: "100%", height: "100%" }
-                        : [styles.groupImage, { aspectRatio: GROUP_AR_MOBILE, maxHeight: heroViewportH - 24 }]
-                    }
-                    resizeMode={IMAGE_MODE}
-                    accessible
-                    accessibilityLabel="UF Lion Dance Team — Board group photo"
-                  />
-                  <View style={styles.groupCaptionPill}>
-                    <Text style={styles.groupCaptionText}>Board 2025–26</Text>
-                  </View>
-                </View>
+              Meet the team!
+            </Text>
 
-                {/* right: title block */}
-                <View
-                  style={{
-                    ...(isWideHero ? { flex: 1 } : { width: "100%" }),
-                    alignItems: isWideHero ? "flex-start" : "center",
-                    justifyContent: "center",
-                    gap: 8,
-                    minWidth: 0,
-                    flexBasis: 0,
-                    flexGrow: 1,
-                    paddingRight: 0,
-                    position: "relative",
-                    paddingBottom: isWideHero ? 36 : 0,
-                  }}
-                >
-                  <Text style={[styles.kicker, { fontSize: KICKER_SIZE }]}>
-                    UF LION DANCE TEAM 2025–2026
-                  </Text>
-                  <Text style={[styles.h1, { fontSize: H1, lineHeight: H1_LH }]}>
-                    BOARD MEMBERS
-                  </Text>
-                  <Text
-                    style={[
-                      styles.copyCenter,
-                      { textAlign: isWideHero ? "left" : "center", fontSize: COPY_SIZE, lineHeight: COPY_LH },
-                    ]}
-                  >
-                    The board leads our team with dedication, creativity, and a passion for lion dance.
-                  </Text>
+            <ChevronsCue
+              color={PURPLE}
+              size={CHEVRON_SIZE}
+              bottom={CHEVRON_BOTTOM}
+              visible={isWideHero}
+              onPress={scrollToGrid}
+            />
+          </View>
+        </View>
+      </View>
+    ) : (
+      // phone: compact header text only (no big image)
+      <View
+        style={{
+          width: "100%",
+          maxWidth: HERO_MAX_W,
+          paddingHorizontal: 12,
+          paddingTop: 8,
+          paddingBottom: 12,
+          alignSelf: "center",
+          alignItems: "center",
+          gap: 6,
+        }}
+      >
+        <Text style={[styles.kicker, { fontSize: KICKER_SIZE }]}>
+          UF LION DANCE TEAM 2025–2026
+        </Text>
+        <Text style={[styles.h1, { fontSize: H1, lineHeight: H1_LH }]}>
+          BOARD MEMBERS
+        </Text>
+        <Text style={[styles.copyCenter, { fontSize: COPY_SIZE, lineHeight: COPY_LH }]}>
+          Meet our team.
+        </Text>
+      </View>
+    )}
 
-                  <ChevronsCue
-                    color={PURPLE}
-                    size={CHEVRON_SIZE}
-                    bottom={CHEVRON_BOTTOM}
-                    visible={isWideHero}
-                    onPress={scrollToGrid}
-                  />
-                </View>
-              </View>
-            </View>
+    <View style={[styles.sectionRule, { maxWidth: HERO_MAX_W, marginBottom: 6 }]} />
+    <View style={{ height: isMobile ? 8 : 48 }} />
+  </>
+}
 
-            <View style={[styles.sectionRule, { maxWidth: HERO_MAX_W, marginBottom: 8 }]} />
-            <View style={{ height: isMobile ? 40 : 64 }} />
-          </>
-        }
         renderSectionHeader={({ section }) => {
           const title = String(section.title ?? "");
           const isAccent = /executive|chair/i.test(title);

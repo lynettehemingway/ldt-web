@@ -5,6 +5,7 @@ import { Platform } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import ContactDock from "./contact_dock";
 
+
 export default function RootLayout() {
   return (
     <SafeAreaProvider>

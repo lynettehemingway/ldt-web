@@ -15,16 +15,15 @@ import {
 import Svg, { Path } from "react-native-svg";
 import ColorSwatchRow from "../app/colorswatchrow";
 import Header, { HEADER_H } from "../app/header";
+import ScreenContainer from "./screen_container";
 
 const PURPLE = "#6f00ff";
 const PAPER = "#f7f4f1ff";
 
-// ---- breakpoints ----
-const BREAKPOINT = 900;     // desktop
-const TABLET_BP  = 680;     // tablet-ish
-const PHONE_BP   = 420;     // small phones
+const BREAKPOINT = 900;
+const TABLET_BP  = 680;
+const PHONE_BP   = 420;
 
-// ---------- utils ----------
 function clamp(n: number, lo: number, hi: number) {
   return Math.max(lo, Math.min(n, hi));
 }
@@ -32,7 +31,6 @@ function rsize(winW: number, pref: number, min: number, max: number, base = 1200
   return clamp(pref * (winW / base), min, max);
 }
 
-// ---------- svg chevrons ----------
 const AnimatedPath = Animated.createAnimatedComponent(Path);
 function ChevronsCue({
   color = PURPLE,
@@ -51,14 +49,19 @@ function ChevronsCue({
   size?: number;
   containerStyle?: any;
 }) {
-  if (!visible) return null;
+  const op1Ref = useRef(new Animated.Value(0.25));
+  const op2Ref = useRef(new Animated.Value(0.25));
+  const op3Ref = useRef(new Animated.Value(0.25));
+  const bobRef = useRef(new Animated.Value(0));
 
-  const op1 = useRef(new Animated.Value(0.25)).current;
-  const op2 = useRef(new Animated.Value(0.25)).current;
-  const op3 = useRef(new Animated.Value(0.25)).current;
-  const bob = useRef(new Animated.Value(0)).current;
+  const op1 = op1Ref.current;
+  const op2 = op2Ref.current;
+  const op3 = op3Ref.current;
+  const bob = bobRef.current;
 
   useEffect(() => {
+    if (!visible) return;
+
     const pulse = (v: Animated.Value, delay: number) =>
       Animated.loop(
         Animated.sequence([
@@ -78,7 +81,9 @@ function ChevronsCue({
         Animated.timing(bob, { toValue: 0,  duration: 650, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
       ])
     ).start();
-  }, [op1, op2, op3, bob]);
+  }, [visible, op1, op2, op3, bob]);
+
+  if (!visible) return null;
 
   const svgH = size;
   const svgW = Math.round(size * (28 / 60));
@@ -88,32 +93,32 @@ function ChevronsCue({
     : { position: "absolute" as const, left: 0, right: 0, bottom, alignItems: "center" as const };
 
   return (
-    <Animated.View
-      style={[baseStyle, { transform: [{ translateY: bob }], zIndex: 20, elevation: 20 }, containerStyle]}
-    >
-      <Pressable
-        accessibilityRole="button"
-        accessibilityLabel="Scroll down"
-        onPress={onPress}
-        hitSlop={{ top: 12, bottom: 12, left: 20, right: 20 }}
-        style={({ pressed }) => ({ transform: [{ scale: pressed ? 0.98 : 1 }] })}
+    <ScreenContainer>
+      <Animated.View
+        style={[baseStyle, { transform: [{ translateY: bob }], zIndex: 20, elevation: 20 }, containerStyle]}
       >
-        <Svg width={svgW} height={svgH} viewBox="0 0 28 60" pointerEvents="none">
-          <AnimatedPath d="M4 10 L14 20 L24 10" stroke={color} strokeWidth={3} strokeLinecap="round" strokeLinejoin="round" fill="none" opacity={op1 as unknown as number} />
-          <AnimatedPath d="M4 28 L14 38 L24 28" stroke={color} strokeWidth={3} strokeLinecap="round" strokeLinejoin="round" fill="none" opacity={op2 as unknown as number} />
-          <AnimatedPath d="M4 46 L14 56 L24 46" stroke={color} strokeWidth={3} strokeLinecap="round" strokeLinejoin="round" fill="none" opacity={op3 as unknown as number} />
-        </Svg>
-      </Pressable>
-    </Animated.View>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Scroll down"
+          onPress={onPress}
+          hitSlop={{ top: 12, bottom: 12, left: 20, right: 20 }}
+          style={({ pressed }) => ({ transform: [{ scale: pressed ? 0.98 : 1 }] })}
+        >
+          <Svg width={svgW} height={svgH} viewBox="0 0 28 60" pointerEvents="none">
+            <AnimatedPath d="M4 10 L14 20 L24 10" stroke={color} strokeWidth={3} strokeLinecap="round" strokeLinejoin="round" fill="none" opacity={op1 as unknown as number} />
+            <AnimatedPath d="M4 28 L14 38 L24 28" stroke={color} strokeWidth={3} strokeLinecap="round" strokeLinejoin="round" fill="none" opacity={op2 as unknown as number} />
+            <AnimatedPath d="M4 46 L14 56 L24 46" stroke={color} strokeWidth={3} strokeLinecap="round" strokeLinejoin="round" fill="none" opacity={op3 as unknown as number} />
+          </Svg>
+        </Pressable>
+      </Animated.View>
+    </ScreenContainer>
   );
 }
 
-// tiny star as text (no image dep)
 function StarText({ size = 18, style }: { size?: number; style?: any }) {
   return <Text style={[{ fontSize: size, lineHeight: size, color: "#000" }, style]}>★</Text>;
 }
 
-// ---------- Home ----------
 export default function Home() {
   const scrollRef = useRef<ScrollView>(null);
   const pillarsAnchorY = useRef<number>(0);
@@ -124,13 +129,12 @@ export default function Home() {
   const isPhone  = winW <= PHONE_BP;
 
   const MAX_W = isMobile ? Math.min(640, winW - 16) : Math.min(1280, winW - 32);
-  const TOP_SPACER = Platform.OS === "web" ? HEADER_H : 0;
+  const TOP_SPACER = Platform.OS === "web" && winW >= BREAKPOINT ? HEADER_H : 0;
   const HERO_MIN_VIEW = Math.max(560, winH - TOP_SPACER);
 
   const [heroSize, setHeroSize] = useState({ w: 0, h: 0 });
   const base = Math.min(heroSize.w || winW, MAX_W);
 
-  // spacing + type
   const CARD_PAD_H = isPhone ? 12 : isMobile ? 14 : 16;
   const CARD_PAD_V = isPhone ? 12 : isMobile ? 14 : 16;
   const COL_GAP = isPhone ? 10 : isMobile ? 14 : isTablet ? 18 : 20;
@@ -143,10 +147,8 @@ export default function Home() {
   const STAR = clamp(base * 0.045, 16, 28);
   const CHEVRON_SIZE = Math.round(rsize(winW, 56, 42, 72));
 
-  // *** Bigger mobile hero ***
-
   const CIRCLE = clamp(base * (isPhone ? 0.95 : isMobile ? 0.70 : 0.40), 320, isPhone ? 560 : 560);
-  const LION_H = clamp(base * (isPhone ? 1.10 : isMobile ? 0.80 : 0.80), 420, 880);
+  const LION_H = clamp(base * (isPhone ? 1.10 : isMobile ? 0.60 : 0.40), 900, 900);
 
   const IMAGE_RESIZE_MODE: "contain" | "cover" = "contain";
 
@@ -155,13 +157,19 @@ export default function Home() {
     scrollRef.current?.scrollTo({ y, animated: true });
   };
 
+const HERO_IMG_TOP =
+  Platform.OS === "web" && winW >= BREAKPOINT
+    ? 64            // desktop web
+    : (isPhone ? 16 : isMobile ? 24 : 12);  // phones & tablets (web/native)
+
+
   return (
     <SafeAreaView
       style={{
         flex: 1,
         backgroundColor: PAPER,
-        paddingTop: Platform.OS === "web" ? HEADER_H * 0.4 : 0,
-        marginTop: isPhone ? 20 : isMobile ? -40 : -150, // push down on phone, normal on desktop
+        paddingTop: 0,
+        marginTop: isPhone ? 0 : isMobile ? -40 : -150,
       }}
     >
       <Header />
@@ -178,7 +186,6 @@ export default function Home() {
       >
         {TOP_SPACER > 0 && <View style={{ height: TOP_SPACER }} />}
 
-        {/* hero card */}
         <View
           style={[
             styles.heroCard,
@@ -199,17 +206,15 @@ export default function Home() {
             setHeroSize({ w: width, h: height });
           }}
         >
-          {/* IMAGE COLUMN */}
           <View
             style={{
               width: isMobile ? "100%" : undefined,
-              flex: isMobile ? undefined : isTablet ? 1.05 : 1.15,
+              flex: isMobile ? undefined : isTablet ? 1.15 : 1.35,
               minHeight: Math.max(300, CIRCLE * (isMobile ? 1.2 : 0.85)),
               alignItems: "center",
               justifyContent: "center",
             }}
           >
-            {/* background circle */}
             <View
               style={{
                 position: "absolute",
@@ -225,19 +230,18 @@ export default function Home() {
                 zIndex: 0,
               }}
             />
-            {/* lion */}
             <Image
               source={require("../assets/images/lions.png")}
               style={{
-                width: isMobile ? CIRCLE * 1.05 : "100%",
+                width: isMobile ? CIRCLE * 2.70 : "100%",
                 height: isMobile ? CIRCLE * 1.05 : LION_H,
                 resizeMode: IMAGE_RESIZE_MODE,
                 zIndex: 1,
+                marginTop: HERO_IMG_TOP,
               }}
             />
           </View>
 
-          {/* TEXT COLUMN */}
           <View
             style={{
               width: isMobile ? "100%" : undefined,
@@ -265,7 +269,6 @@ export default function Home() {
               </View>
             </View>
 
-            {/* body copy */}
             <Text
               style={{
                 color: "#1a1a1a",
@@ -282,7 +285,6 @@ export default function Home() {
               individual growth in our dancers.
             </Text>
 
-            {/* chevrons — hide on the tiniest phones */}
             <ChevronsCue
               inline
               size={CHEVRON_SIZE}
@@ -294,7 +296,6 @@ export default function Home() {
           </View>
         </View>
 
-        {/* scroll target anchor */}
         <View onLayout={(e) => (pillarsAnchorY.current = e.nativeEvent.layout.y)} />
         <View
           style={{
@@ -302,15 +303,13 @@ export default function Home() {
             maxWidth: 1200,
             alignSelf: "center",
             height: 2,
-            backgroundColor: "rgba(0,0,0,0.1)", // light neutral line
+            backgroundColor: "rgba(0,0,0,0.1)",
             marginTop: 32,
             marginBottom: 24,
             borderRadius: 999,
           }}
         />
 
-
-        {/* pillars */}
         <ColorSwatchRow />
 
         <View style={{ height: isMobile ? 60 : 100 }} />
@@ -339,4 +338,3 @@ const styles = StyleSheet.create({
     letterSpacing: 0.2,
   },
 });
-
