@@ -8,11 +8,11 @@ This is a [Expo](https://expo.dev) website for the **University of Florida Lion 
 
 ```bash
 npm install
-
+```
 2. Start the web
 ```bash
 npm run web
-
+```
 ## About
 The UF Lion Dance Team is a student organization dedicated to teaching and performing lion dance while building community and celebrating culture.
 
