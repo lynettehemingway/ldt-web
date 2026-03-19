@@ -32,7 +32,7 @@ const GALLERIES: {
   folderId: string;
   slideIds?: string[];
 }[] = [
-      {
+  {
     title: "FSU Mid Autumn • 2025",
     folderId: "1eMI5Lj6xgADv22jmFqj24OyCb7VUloNl",
     slideIds: [
@@ -41,7 +41,7 @@ const GALLERIES: {
       "1rHtvPtD5Jth8QKrKGiihMvrobL8f9vxh",
     ],
   },
-    {
+  {
     title: "CASA Mid Autumn • 2025",
     folderId: "1OyhA6QCnd6aKUxFII77dEwTTcYI7sJlM",
     slideIds: [
@@ -50,7 +50,7 @@ const GALLERIES: {
       "1NMi_qD_nIN5er223Hx8dYnf4U2IZUb9T",
     ],
   },
-    {
+  {
     title: "TTT • 2025",
     folderId: "1FBr2_hmkOVPy8owbBjT4W4s7GJW2fzX5",
     slideIds: [
@@ -80,7 +80,51 @@ const GALLERIES: {
     folderId: "1O5ZQpwQhO9gU8uqNmxGD7W3HNkYPZOwN",
     slideIds: ["1nnyt4WmVuM2-nILvoxTFng3xB6TUxADO"],
   },
-  
+  {
+    title: "UF Homecoming Parade",
+    folderId: "1pr3qmftgUwqoOWQ_5wcJP-UdfkXgFjPi",
+    slideIds: ["1ruyYJV-db1esyLiP6Ib4A1RioDEocoMb"],
+  },
+  {
+    title: "UF Engineering International Student Appreciation Day",
+    folderId: "1Ox_YaF8ld8X__1aeHW4KVN_0-jGU2Rmx",
+    slideIds: ["1k7-Aj5ZJdZ7yOBgarzUxjbdYULmNX9qz"],
+  },
+  {
+    title: "AASU Unity Banquet",
+    folderId: "1akfKS4yjSCSh1TWRyQ2oAo4tZ_ROac24",
+    slideIds: ["1zLUjv3dDAzywEiOXsl2NEgYgXM6kMdZB"],
+  },
+  {
+    title: "Flying Pig Parade",
+    folderId: "1gHHg17xKROimghE8-C0qU4REhamvJMwn",
+    slideIds: ["1J6_ZbBbkgKrATToDQ0IZ6qOWqxuHtS0g"],
+  },
+  {
+    title: "FLC International Night",
+    folderId: "1UYiWOBF2CjPF2KwKgVOcJpAlsr4InfkR",
+    slideIds: ["1EalVriOaT0cElzh721_5RCyYDy9ylDhb"],
+  },
+  {
+    title: "VISA",
+    folderId: "111mQ3r-wxY5f2f8tq-o0515-JURKbTaA",
+    slideIds: ["1o21MLY-9BDiQ5Ec5EkW7s1fDF2rMq7kt"],
+  },
+  {
+    title: "USF TET",
+    folderId: "1-ty_AyA8ysuOuA7EV_YSVFSNIFxz782o",
+    slideIds: ["16blzPAT5y4xM7SlOIOdO6b5-vIF7dkGb"],
+  },
+  {
+    title: "CNY",
+    folderId: "1X13MxAHLwtr78pXa50MBXXXd9-YP_cM6",
+    slideIds: ["1s49ljS_a_i5EUGKLxXcsaGTCPbwlpU2h"],
+  },
+  {
+    title: "TET",
+    folderId: "1jaJ0rw-Irtw_XS6xNOWbfaJ_nFLmmkXu",
+    slideIds: ["1QAHmjfvhTkCEa3njrIwQWNfqCXv3ROlM"],
+  },
 ];
 
 /** Build multiple cookie-free-ish candidates for each Drive file ID.
@@ -107,9 +151,15 @@ export default function MediaPage() {
   const { width: winW } = useWindowDimensions();
 
   // responsive size helper (matches board.tsx behavior)
-  const clamp = (n: number, lo: number, hi: number) => Math.max(lo, Math.min(n, hi));
-  const rsize = (winW: number, pref: number, min: number, max: number, base = 1200) =>
-    clamp(Math.round(pref * (winW / base)), min, max);
+  const clamp = (n: number, lo: number, hi: number) =>
+    Math.max(lo, Math.min(n, hi));
+  const rsize = (
+    winW: number,
+    pref: number,
+    min: number,
+    max: number,
+    base = 1200,
+  ) => clamp(Math.round(pref * (winW / base)), min, max);
   const KICKER_SIZE = rsize(winW, 14, 12, 16);
 
   return (
@@ -122,7 +172,12 @@ export default function MediaPage() {
       >
         <View style={[styles.container, styles.pageHeader]}>
           <Text style={styles.h1}>MEDIA</Text>
-          <Text style={[styles.kicker, { fontSize: KICKER_SIZE , alignContent: "center"}]}>
+          <Text
+            style={[
+              styles.kicker,
+              { fontSize: KICKER_SIZE, alignContent: "center" },
+            ]}
+          >
             Performances, workshops, and behind-the-scenes
           </Text>
         </View>
@@ -197,13 +252,7 @@ function GallerySection({
 }
 
 /** ---------- Simple, reliable hero image that links to Drive ---------- */
-function HeroImage({
-  slide,
-  onPress,
-}: {
-  slide: Slide;
-  onPress: () => void;
-}) {
+function HeroImage({ slide, onPress }: { slide: Slide; onPress: () => void }) {
   const { width } = useWindowDimensions();
   const maxW = Math.min(width - 24, 1200);
   const height = Math.max(Math.round(maxW * 0.56), 380);
@@ -310,7 +359,7 @@ function HeroCollage({ slides }: { slides: Slide[] }) {
   const colW = Math.floor((maxW - gap * (columns - 1)) / columns);
 
   const [sizes, setSizes] = useState<Record<number, { w: number; h: number }>>(
-    {}
+    {},
   );
   useEffect(() => {
     slides.forEach((s, i) => {
@@ -318,14 +367,14 @@ function HeroCollage({ slides }: { slides: Slide[] }) {
       Image.getSize(
         s.sources[0],
         (w, h) => setSizes((prev) => ({ ...prev, [i]: { w, h } })),
-        () => setSizes((prev) => ({ ...prev, [i]: { w: 3, h: 2 } }))
+        () => setSizes((prev) => ({ ...prev, [i]: { w: 3, h: 2 } })),
       );
     });
   }, [slides]);
 
   const cols: { i: number; h: number }[][] = Array.from(
     { length: columns },
-    () => []
+    () => [],
   );
   const heights = new Array(columns).fill(0);
 
@@ -373,7 +422,12 @@ function CollageImage({ sources }: { sources: string[] }) {
       <img
         src={sources[idx]}
         referrerPolicy="no-referrer"
-        style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+        style={{
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
+          display: "block",
+        }}
         alt=""
         onError={tryNext}
       />
@@ -419,7 +473,8 @@ function NativeFallback({ folderUrl }: { folderUrl: string }) {
     <View style={styles.stateCard}>
       <Text style={styles.errorTitle}>Web gallery shown on website</Text>
       <Text style={styles.emptyBody}>
-        On native apps we don’t embed Google Drive. Tap below to open the folder.
+        On native apps we don’t embed Google Drive. Tap below to open the
+        folder.
       </Text>
       <Pressable
         style={{ marginTop: 10 }}
@@ -455,7 +510,7 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
     textAlign: "center",
   },
-  kicker: { color: INK, fontWeight: "900", letterSpacing: 1  },
+  kicker: { color: INK, fontWeight: "900", letterSpacing: 1 },
 
   sectionCard: {
     backgroundColor: "#fffdf8",
