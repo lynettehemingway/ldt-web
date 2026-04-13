@@ -99,7 +99,11 @@ const EXEC: Member[] = [
     name: "Colin Liang",
     role: "Vice President",
     socials: { instagram: "https://www.instagram.com/_jhapu/" },
-    details: { major: "Chemistry, Pre-Med Track", year: "2nd", pronouns: "he/him" },
+    details: {
+      major: "Chemistry, Pre-Med Track",
+      year: "2nd",
+      pronouns: "he/him",
+    },
   },
   {
     id: "treasurer",
@@ -144,7 +148,11 @@ const DIRECTORS: Member[] = [
     name: "Han Nguyen",
     role: "Show Director",
     socials: { instagram: "https://www.instagram.com/hantheburgher/" },
-    details: { major: "Food & Resource Economics", year: "2nd Year", pronouns: "he/him" },
+    details: {
+      major: "Food & Resource Economics",
+      year: "2nd Year",
+      pronouns: "he/him",
+    },
   },
   {
     id: "showDirector2",
@@ -170,7 +178,13 @@ const DIRECTORS: Member[] = [
 function clamp(n: number, lo: number, hi: number) {
   return Math.max(lo, Math.min(n, hi));
 }
-function rsize(winW: number, pref: number, min: number, max: number, base = 1200) {
+function rsize(
+  winW: number,
+  pref: number,
+  min: number,
+  max: number,
+  base = 1200,
+) {
   return clamp(pref * (winW / base), min, max);
 }
 
@@ -201,9 +215,17 @@ function ChevronsCue({
       Animated.loop(
         Animated.sequence([
           Animated.delay(delay),
-          Animated.timing(v, { toValue: 1, duration: 320, useNativeDriver: true }),
-          Animated.timing(v, { toValue: 0.25, duration: 420, useNativeDriver: true }),
-        ])
+          Animated.timing(v, {
+            toValue: 1,
+            duration: 320,
+            useNativeDriver: true,
+          }),
+          Animated.timing(v, {
+            toValue: 0.25,
+            duration: 420,
+            useNativeDriver: true,
+          }),
+        ]),
       ).start();
 
     pulse(op1, 0);
@@ -224,7 +246,7 @@ function ChevronsCue({
           easing: Easing.inOut(Easing.sin),
           useNativeDriver: true,
         }),
-      ])
+      ]),
     ).start();
   }, [op1, op2, op3, bob, visible]);
 
@@ -251,12 +273,43 @@ function ChevronsCue({
         accessibilityLabel="Scroll down"
         onPress={onPress}
         hitSlop={{ top: 12, bottom: 12, left: 20, right: 20 }}
-        style={({ pressed }) => ({ transform: [{ scale: pressed ? 0.98 : 1 }] })}
+        style={({ pressed }) => ({
+          transform: [{ scale: pressed ? 0.98 : 1 }],
+        })}
       >
-        <Svg width={svgW} height={svgH} viewBox="0 0 28 60" pointerEvents="none">
-          <AnimatedPath d="M4 10 L14 20 L24 10" stroke={color} strokeWidth={3} strokeLinecap="round" strokeLinejoin="round" fill="none" opacity={op1 as unknown as number} />
-          <AnimatedPath d="M4 28 L14 38 L24 28" stroke={color} strokeWidth={3} strokeLinecap="round" strokeLinejoin="round" fill="none" opacity={op2 as unknown as number} />
-          <AnimatedPath d="M4 46 L14 56 L24 46" stroke={color} strokeWidth={3} strokeLinecap="round" strokeLinejoin="round" fill="none" opacity={op3 as unknown as number} />
+        <Svg
+          width={svgW}
+          height={svgH}
+          viewBox="0 0 28 60"
+          pointerEvents="none"
+        >
+          <AnimatedPath
+            d="M4 10 L14 20 L24 10"
+            stroke={color}
+            strokeWidth={3}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            fill="none"
+            opacity={op1 as unknown as number}
+          />
+          <AnimatedPath
+            d="M4 28 L14 38 L24 28"
+            stroke={color}
+            strokeWidth={3}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            fill="none"
+            opacity={op2 as unknown as number}
+          />
+          <AnimatedPath
+            d="M4 46 L14 56 L24 46"
+            stroke={color}
+            strokeWidth={3}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            fill="none"
+            opacity={op3 as unknown as number}
+          />
         </Svg>
       </Pressable>
     </Animated.View>
@@ -303,15 +356,18 @@ export default function Board() {
   const cardContainerMax = 1100;
   const gutter = isMobile ? 16 : isTablet ? 20 : 24;
   const containerW = Math.min(winW, cardContainerMax);
-  const CARD_W = Math.floor((containerW - (numColumns - 1) * gutter - 2 * 16) / numColumns);
+  const CARD_W = Math.floor(
+    (containerW - (numColumns - 1) * gutter - 2 * 16) / numColumns,
+  );
 
   const SHOW_DIRECTORS = useMemo(
-    () => DIRECTORS.filter((m) => m.role.toLowerCase().includes("show director")),
-    []
+    () =>
+      DIRECTORS.filter((m) => m.role.toLowerCase().includes("show director")),
+    [],
   );
   const WEBMASTERS = useMemo(
     () => DIRECTORS.filter((m) => m.role.toLowerCase().includes("webmaster")),
-    []
+    [],
   );
 
   const sections = useMemo(
@@ -319,10 +375,13 @@ export default function Board() {
       { title: "Executive Board", data: chunk(EXEC, numColumns) },
       {
         title: "Chair Board",
-        data: [...chunk(SHOW_DIRECTORS, numColumns), ...chunk(WEBMASTERS, numColumns)],
+        data: [
+          ...chunk(SHOW_DIRECTORS, numColumns),
+          ...chunk(WEBMASTERS, numColumns),
+        ],
       },
     ],
-    [numColumns, SHOW_DIRECTORS, WEBMASTERS]
+    [numColumns, SHOW_DIRECTORS, WEBMASTERS],
   );
 
   const GROUP_AR_WIDE = 4 / 3;
@@ -332,8 +391,11 @@ export default function Board() {
 
   const heroViewportH = Math.max(620, winH - headerOffset);
   const HERO_INNER_PADDING = 40;
-  const IMG_H = isWideHero ? clamp(heroViewportH - HERO_INNER_PADDING, 420, 1080) : undefined;
-  const IMG_W = isWideHero && IMG_H ? Math.round(IMG_H * GROUP_AR_WIDE) : undefined;
+  const IMG_H = isWideHero
+    ? clamp(heroViewportH - HERO_INNER_PADDING, 420, 1080)
+    : undefined;
+  const IMG_W =
+    isWideHero && IMG_H ? Math.round(IMG_H * GROUP_AR_WIDE) : undefined;
   const heroMinH = heroViewportH;
 
   const scrollToGrid = () => {
@@ -362,131 +424,162 @@ export default function Board() {
           gap: 12,
         }}
         ListHeaderComponent={
-  <>
-    {showHeroPhoto ? (
-      // desktop / tablet: full hero with photo + text
-      <View
-        style={[
-          styles.heroCard,
-          {
-            minHeight: heroMinH,
-            maxWidth: HERO_MAX_W,
-            padding: isMobile ? 16 : 20,
-            gap: isMobile ? 14 : 16,
-          },
-        ]}
-      >
-        <View
-          style={{
-            width: "100%",
-            flexDirection: isWideHero ? "row" : "column",
-            alignItems: isWideHero ? "stretch" : "center",
-            justifyContent: isWideHero ? "space-between" : "center",
-            gap: COL_GAP,
-          }}
-        >
-          {/* left: group photo */}
-          <View
-            style={[
-              styles.groupWrap,
-              isWideHero
-                ? { width: IMG_W, height: IMG_H, alignSelf: "center", flexShrink: 0 }
-                : { width: "100%" },
-            ]}
-          >
-            <Image
-              source={GROUP_SRC}
-              style={
-                isWideHero
-                  ? { width: "100%", height: "100%" }
-                  : [styles.groupImage, { aspectRatio: GROUP_AR_MOBILE, maxHeight: heroViewportH - 24 }]
-              }
-              resizeMode={IMAGE_MODE}
-              accessible
-              accessibilityLabel="UF Lion Dance Team — Board group photo"
-            />
-            <View style={styles.groupCaptionPill}>
-              <Text style={styles.groupCaptionText}>Board 2025–26</Text>
-            </View>
-          </View>
+          <>
+            {showHeroPhoto ? (
+              // desktop / tablet: full hero with photo + text
+              <View
+                style={[
+                  styles.heroCard,
+                  {
+                    minHeight: heroMinH,
+                    maxWidth: HERO_MAX_W,
+                    padding: isMobile ? 16 : 20,
+                    gap: isMobile ? 14 : 16,
+                  },
+                ]}
+              >
+                <View
+                  style={{
+                    width: "100%",
+                    flexDirection: isWideHero ? "row" : "column",
+                    alignItems: isWideHero ? "stretch" : "center",
+                    justifyContent: isWideHero ? "space-between" : "center",
+                    gap: COL_GAP,
+                  }}
+                >
+                  {/* left: group photo */}
+                  <View
+                    style={[
+                      styles.groupWrap,
+                      isWideHero
+                        ? {
+                            width: IMG_W,
+                            height: IMG_H,
+                            alignSelf: "center",
+                            flexShrink: 0,
+                          }
+                        : { width: "100%" },
+                    ]}
+                  >
+                    <Image
+                      source={GROUP_SRC}
+                      style={
+                        isWideHero
+                          ? { width: "100%", height: "100%" }
+                          : [
+                              styles.groupImage,
+                              {
+                                aspectRatio: GROUP_AR_MOBILE,
+                                maxHeight: heroViewportH - 24,
+                              },
+                            ]
+                      }
+                      resizeMode={IMAGE_MODE}
+                      accessible
+                      accessibilityLabel="UF Lion Dance Team — Board group photo"
+                    />
+                    <View style={styles.groupCaptionPill}>
+                      <Text style={styles.groupCaptionText}>Board 2025–26</Text>
+                    </View>
+                  </View>
 
-          {/* right: title block */}
-          <View
-            style={{
-              ...(isWideHero ? { flex: 1 } : { width: "100%" }),
-              alignItems: isWideHero ? "flex-start" : "center",
-              justifyContent: "center",
-              gap: 8,
-              minWidth: 0,
-              flexBasis: 0,
-              flexGrow: 1,
-              paddingRight: 0,
-              position: "relative",
-              paddingBottom: isWideHero ? 36 : 0,
-            }}
-          >
-            <Text style={[styles.kicker, { fontSize: KICKER_SIZE }]}>
-              UF LION DANCE TEAM 2025–2026
-            </Text>
-            <Text style={[styles.h1, { fontSize: H1, lineHeight: H1_LH }]}>
-              BOARD MEMBERS
-            </Text>
-            <Text
+                  {/* right: title block */}
+                  <View
+                    style={{
+                      ...(isWideHero ? { flex: 1 } : { width: "100%" }),
+                      alignItems: isWideHero ? "flex-start" : "center",
+                      justifyContent: "center",
+                      gap: 8,
+                      minWidth: 0,
+                      flexBasis: 0,
+                      flexGrow: 1,
+                      paddingRight: 0,
+                      position: "relative",
+                      paddingBottom: isWideHero ? 36 : 0,
+                    }}
+                  >
+                    <Text style={[styles.kicker, { fontSize: KICKER_SIZE }]}>
+                      UF LION DANCE TEAM 2025–2026
+                    </Text>
+                    <Text
+                      style={[styles.h1, { fontSize: H1, lineHeight: H1_LH }]}
+                    >
+                      BOARD MEMBERS
+                    </Text>
+                    <Text
+                      style={[
+                        styles.copyCenter,
+                        {
+                          textAlign: isWideHero ? "left" : "center",
+                          fontSize: COPY_SIZE,
+                          lineHeight: COPY_LH,
+                        },
+                      ]}
+                    >
+                      Meet the team!
+                    </Text>
+
+                    <ChevronsCue
+                      color={PURPLE}
+                      size={CHEVRON_SIZE}
+                      bottom={CHEVRON_BOTTOM}
+                      visible={isWideHero}
+                      onPress={scrollToGrid}
+                    />
+                  </View>
+                </View>
+              </View>
+            ) : (
+              // phone: compact header text only (no big image)
+              <View
+                style={{
+                  width: "100%",
+                  maxWidth: HERO_MAX_W,
+                  paddingHorizontal: 12,
+                  paddingTop: 8,
+                  paddingBottom: 12,
+                  alignSelf: "center",
+                  alignItems: "center",
+                  gap: 6,
+                }}
+              >
+                <Text style={[styles.kicker, { fontSize: KICKER_SIZE }]}>
+                  UF LION DANCE TEAM 2025–2026
+                </Text>
+                <Text style={[styles.h1, { fontSize: H1, lineHeight: H1_LH }]}>
+                  BOARD MEMBERS
+                </Text>
+                <Text
+                  style={[
+                    styles.copyCenter,
+                    { fontSize: COPY_SIZE, lineHeight: COPY_LH },
+                  ]}
+                >
+                  Meet our team.
+                </Text>
+              </View>
+            )}
+
+            <View
               style={[
-                styles.copyCenter,
-                { textAlign: isWideHero ? "left" : "center", fontSize: COPY_SIZE, lineHeight: COPY_LH },
+                styles.sectionRule,
+                { maxWidth: HERO_MAX_W, marginBottom: 6 },
               ]}
-            >
-              Meet the team!
-            </Text>
-
-            <ChevronsCue
-              color={PURPLE}
-              size={CHEVRON_SIZE}
-              bottom={CHEVRON_BOTTOM}
-              visible={isWideHero}
-              onPress={scrollToGrid}
             />
-          </View>
-        </View>
-      </View>
-    ) : (
-      // phone: compact header text only (no big image)
-      <View
-        style={{
-          width: "100%",
-          maxWidth: HERO_MAX_W,
-          paddingHorizontal: 12,
-          paddingTop: 8,
-          paddingBottom: 12,
-          alignSelf: "center",
-          alignItems: "center",
-          gap: 6,
-        }}
-      >
-        <Text style={[styles.kicker, { fontSize: KICKER_SIZE }]}>
-          UF LION DANCE TEAM 2025–2026
-        </Text>
-        <Text style={[styles.h1, { fontSize: H1, lineHeight: H1_LH }]}>
-          BOARD MEMBERS
-        </Text>
-        <Text style={[styles.copyCenter, { fontSize: COPY_SIZE, lineHeight: COPY_LH }]}>
-          Meet our team.
-        </Text>
-      </View>
-    )}
-
-    <View style={[styles.sectionRule, { maxWidth: HERO_MAX_W, marginBottom: 6 }]} />
-    <View style={{ height: isMobile ? 8 : 48 }} />
-  </>
-}
-
+            <View style={{ height: isMobile ? 8 : 48 }} />
+          </>
+        }
         renderSectionHeader={({ section }) => {
           const title = String(section.title ?? "");
           const isAccent = /executive|chair/i.test(title);
           return (
             <View style={styles.sectionHeaderWrap}>
-              <Text style={[styles.sectionHeader, { fontSize: SECTION_H, color: isAccent ? PURPLE : INK }]}>
+              <Text
+                style={[
+                  styles.sectionHeader,
+                  { fontSize: SECTION_H, color: isAccent ? PURPLE : INK },
+                ]}
+              >
                 {title}
               </Text>
             </View>
@@ -515,8 +608,15 @@ export default function Board() {
 }
 
 // ---- member card with crossfade hover ----
-function MemberCard({ member, cardWidth }: { member: Member; cardWidth: number }) {
-  const mainSrc = (PHOTOS as any)[member.id]?.main ?? require("../assets/images/lions.png");
+function MemberCard({
+  member,
+  cardWidth,
+}: {
+  member: Member;
+  cardWidth: number;
+}) {
+  const mainSrc =
+    (PHOTOS as any)[member.id]?.main ?? require("../assets/images/lions.png");
   const altSrc = (PHOTOS as any)[member.id]?.alt ?? mainSrc;
 
   // keep both mounted and crossfade
@@ -558,9 +658,21 @@ function MemberCard({ member, cardWidth }: { member: Member; cardWidth: number }
       >
         <View style={styles.photoWrap}>
           {/* base layer */}
-          <Image source={mainSrc} style={[styles.photo, StyleSheet.absoluteFillObject]} accessible accessibilityLabel={a11y} />
+          <Image
+            source={mainSrc}
+            style={[styles.photo, StyleSheet.absoluteFillObject]}
+            accessible
+            accessibilityLabel={a11y}
+          />
           {/* alt layer */}
-          <Animated.Image source={altSrc} style={[styles.photo, StyleSheet.absoluteFillObject, { opacity: altOp }]} />
+          <Animated.Image
+            source={altSrc}
+            style={[
+              styles.photo,
+              StyleSheet.absoluteFillObject,
+              { opacity: altOp },
+            ]}
+          />
           <View style={styles.rolePill}>
             <Text style={styles.rolePillText}>{member.role}</Text>
           </View>
@@ -594,8 +706,12 @@ function MemberCard({ member, cardWidth }: { member: Member; cardWidth: number }
         <View style={styles.flexSpacer} />
 
         <View style={styles.socialRow}>
-          {member.socials?.instagram && <Chip label="Instagram" href={member.socials.instagram} />}
-          {member.socials?.website && <Chip label="Website" href={member.socials.website} />}
+          {member.socials?.instagram && (
+            <Chip label="Instagram" href={member.socials.instagram} />
+          )}
+          {member.socials?.website && (
+            <Chip label="Website" href={member.socials.website} />
+          )}
         </View>
       </View>
     </View>
@@ -709,7 +825,12 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     borderRadius: 999,
   },
-  rolePillText: { color: "#fff", fontWeight: "900", letterSpacing: 0.5, fontSize: 12 },
+  rolePillText: {
+    color: "#fff",
+    fontWeight: "900",
+    letterSpacing: 0.5,
+    fontSize: 12,
+  },
 
   meta: { padding: 12, gap: 8, flex: 1 },
   flexSpacer: { flexGrow: 1 },
