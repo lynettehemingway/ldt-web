@@ -33,31 +33,54 @@ const GALLERIES: {
   slideIds?: string[];
 }[] = [
   {
-    title: "FSU Mid Autumn • 2025",
-    folderId: "1eMI5Lj6xgADv22jmFqj24OyCb7VUloNl",
-    slideIds: [
-      "1w3vHfXULOLZiKdjeTo4qVCAYs_OQu2eZ",
-      "1iZx1h6-JYVBndmddnWbmRrQloJSrFE9D",
-      "1rHtvPtD5Jth8QKrKGiihMvrobL8f9vxh",
-    ],
+    title: "TET",
+    folderId: "1jaJ0rw-Irtw_XS6xNOWbfaJ_nFLmmkXu",
+    slideIds: ["1QAHmjfvhTkCEa3njrIwQWNfqCXv3ROlM"],
   },
   {
-    title: "CASA Mid Autumn • 2025",
-    folderId: "1OyhA6QCnd6aKUxFII77dEwTTcYI7sJlM",
-    slideIds: [
-      "1Dx5hPibWxdB6nvewRhcZMrpUFtGLX88e",
-      "1gAXyphJTBG0TC0tejPIqSuEr4ND4NvPC",
-      "1NMi_qD_nIN5er223Hx8dYnf4U2IZUb9T",
-    ],
+    title: "CNY",
+    folderId: "1X13MxAHLwtr78pXa50MBXXXd9-YP_cM6",
+    slideIds: ["1s49ljS_a_i5EUGKLxXcsaGTCPbwlpU2h"],
   },
   {
-    title: "TTT • 2025",
-    folderId: "1FBr2_hmkOVPy8owbBjT4W4s7GJW2fzX5",
-    slideIds: [
-      "1T1PH6RV4AWdFisxjIMREX-Nh5--FW6Wu",
-      "15Z9AS8mOl1nJ72LKwtcy5wuBe_KlJPL_",
-      "1vvz-Lst1C2-0YOQ6IEIHb_ZqPGvfufXN",
-    ],
+    title: "USF TET",
+    folderId: "1-ty_AyA8ysuOuA7EV_YSVFSNIFxz782o",
+    slideIds: ["16blzPAT5y4xM7SlOIOdO6b5-vIF7dkGb"],
+  },
+  {
+    title: "VISA",
+    folderId: "111mQ3r-wxY5f2f8tq-o0515-JURKbTaA",
+    slideIds: ["1o21MLY-9BDiQ5Ec5EkW7s1fDF2rMq7kt"],
+  },
+  {
+    title: "FLC International Night",
+    folderId: "1UYiWOBF2CjPF2KwKgVOcJpAlsr4InfkR",
+    slideIds: ["1EalVriOaT0cElzh721_5RCyYDy9ylDhb"],
+  },
+  {
+    title: "Flying Pig Parade",
+    folderId: "1gHHg17xKROimghE8-C0qU4REhamvJMwn",
+    slideIds: ["1J6_ZbBbkgKrATToDQ0IZ6qOWqxuHtS0g"],
+  },
+  {
+    title: "AASU Unity Banquet",
+    folderId: "1akfKS4yjSCSh1TWRyQ2oAo4tZ_ROac24",
+    slideIds: ["1zLUjv3dDAzywEiOXsl2NEgYgXM6kMdZB"],
+  },
+  {
+    title: "UF Engineering International Student Appreciation Day",
+    folderId: "1Ox_YaF8ld8X__1aeHW4KVN_0-jGU2Rmx",
+    slideIds: ["1k7-Aj5ZJdZ7yOBgarzUxjbdYULmNX9qz"],
+  },
+  {
+    title: "UF Homecoming Parade",
+    folderId: "1pr3qmftgUwqoOWQ_5wcJP-UdfkXgFjPi",
+    slideIds: ["1ruyYJV-db1esyLiP6Ib4A1RioDEocoMb"],
+  },
+  {
+    title: "LDT Workshop • 09/11/2025",
+    folderId: "1O5ZQpwQhO9gU8uqNmxGD7W3HNkYPZOwN",
+    slideIds: ["1nnyt4WmVuM2-nILvoxTFng3xB6TUxADO"],
   },
   {
     title: "LDT x CASA x VSO Workshop • 09/05/2025",
@@ -76,54 +99,31 @@ const GALLERIES: {
     ],
   },
   {
-    title: "LDT Workshop • 09/11/2025",
-    folderId: "1O5ZQpwQhO9gU8uqNmxGD7W3HNkYPZOwN",
-    slideIds: ["1nnyt4WmVuM2-nILvoxTFng3xB6TUxADO"],
+    title: "TTT • 2025",
+    folderId: "1FBr2_hmkOVPy8owbBjT4W4s7GJW2fzX5",
+    slideIds: [
+      "1T1PH6RV4AWdFisxjIMREX-Nh5--FW6Wu",
+      "15Z9AS8mOl1nJ72LKwtcy5wuBe_KlJPL_",
+      "1vvz-Lst1C2-0YOQ6IEIHb_ZqPGvfufXN",
+    ],
   },
   {
-    title: "UF Homecoming Parade",
-    folderId: "1pr3qmftgUwqoOWQ_5wcJP-UdfkXgFjPi",
-    slideIds: ["1ruyYJV-db1esyLiP6Ib4A1RioDEocoMb"],
+    title: "CASA Mid Autumn • 2025",
+    folderId: "1OyhA6QCnd6aKUxFII77dEwTTcYI7sJlM",
+    slideIds: [
+      "1Dx5hPibWxdB6nvewRhcZMrpUFtGLX88e",
+      "1gAXyphJTBG0TC0tejPIqSuEr4ND4NvPC",
+      "1NMi_qD_nIN5er223Hx8dYnf4U2IZUb9T",
+    ],
   },
   {
-    title: "UF Engineering International Student Appreciation Day",
-    folderId: "1Ox_YaF8ld8X__1aeHW4KVN_0-jGU2Rmx",
-    slideIds: ["1k7-Aj5ZJdZ7yOBgarzUxjbdYULmNX9qz"],
-  },
-  {
-    title: "AASU Unity Banquet",
-    folderId: "1akfKS4yjSCSh1TWRyQ2oAo4tZ_ROac24",
-    slideIds: ["1zLUjv3dDAzywEiOXsl2NEgYgXM6kMdZB"],
-  },
-  {
-    title: "Flying Pig Parade",
-    folderId: "1gHHg17xKROimghE8-C0qU4REhamvJMwn",
-    slideIds: ["1J6_ZbBbkgKrATToDQ0IZ6qOWqxuHtS0g"],
-  },
-  {
-    title: "FLC International Night",
-    folderId: "1UYiWOBF2CjPF2KwKgVOcJpAlsr4InfkR",
-    slideIds: ["1EalVriOaT0cElzh721_5RCyYDy9ylDhb"],
-  },
-  {
-    title: "VISA",
-    folderId: "111mQ3r-wxY5f2f8tq-o0515-JURKbTaA",
-    slideIds: ["1o21MLY-9BDiQ5Ec5EkW7s1fDF2rMq7kt"],
-  },
-  {
-    title: "USF TET",
-    folderId: "1-ty_AyA8ysuOuA7EV_YSVFSNIFxz782o",
-    slideIds: ["16blzPAT5y4xM7SlOIOdO6b5-vIF7dkGb"],
-  },
-  {
-    title: "CNY",
-    folderId: "1X13MxAHLwtr78pXa50MBXXXd9-YP_cM6",
-    slideIds: ["1s49ljS_a_i5EUGKLxXcsaGTCPbwlpU2h"],
-  },
-  {
-    title: "TET",
-    folderId: "1jaJ0rw-Irtw_XS6xNOWbfaJ_nFLmmkXu",
-    slideIds: ["1QAHmjfvhTkCEa3njrIwQWNfqCXv3ROlM"],
+    title: "FSU Mid Autumn • 2025",
+    folderId: "1eMI5Lj6xgADv22jmFqj24OyCb7VUloNl",
+    slideIds: [
+      "1w3vHfXULOLZiKdjeTo4qVCAYs_OQu2eZ",
+      "1iZx1h6-JYVBndmddnWbmRrQloJSrFE9D",
+      "1rHtvPtD5Jth8QKrKGiihMvrobL8f9vxh",
+    ],
   },
 ];
 
