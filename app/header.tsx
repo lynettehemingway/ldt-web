@@ -13,16 +13,18 @@ import {
 } from "react-native";
 
 const BRAND_SERIF =
-  Platform.OS === "web" ? "'Merriweather', Georgia, serif" : "Merriweather_900Black";
+  Platform.OS === "web"
+    ? "'Merriweather', Georgia, serif"
+    : "Merriweather_900Black";
 
 export const HEADER_H = 90;
 
-const PAPER  = "#f7f4f1ff";
+const PAPER = "#f7f4f1ff";
 const ACCENT = "#d9cdbb";
 const PURPLE = "#6f00ff";
-const INK    = "#161616";
+const INK = "#161616";
 const BREAKPOINT = 900; // switch to hamburger
-const MOBILE_BP = 480;  // phone cutoff for nav-link font
+const MOBILE_BP = 480; // phone cutoff for nav-link font
 
 const NAV = [
   { label: "HOME", href: "/" },
@@ -59,7 +61,7 @@ function NavLink({
 
   return (
     <Pressable
-      href={href}                      // <-- let RNW render an <a> safely
+      href={href} // <-- let RNW render an <a> safely
       accessibilityRole="link"
       onPress={onNavigate}
       onHoverIn={Platform.OS === "web" ? () => setHovered(true) : undefined}
@@ -78,7 +80,10 @@ function NavLink({
           style={[
             styles.link,
             isPhone && styles.linkPhone,
-            { color: active || hovered ? PURPLE : INK, fontWeight: active ? "900" : "700" },
+            {
+              color: active || hovered ? PURPLE : INK,
+              fontWeight: active ? "900" : "700",
+            },
           ]}
         >
           {label}
@@ -86,14 +91,16 @@ function NavLink({
         <Animated.View
           style={[
             styles.underline,
-            { transform: [{ scaleX: underline }], opacity: hovered || active ? 1 : 0.5 },
+            {
+              transform: [{ scaleX: underline }],
+              opacity: hovered || active ? 1 : 0.5,
+            },
           ]}
         />
       </View>
     </Pressable>
   );
 }
-
 
 export default function Header() {
   const pathname = usePathname();
@@ -102,8 +109,8 @@ export default function Header() {
 
   // breakpoints
   const isHome = pathname === "/" || pathname === "/index";
-  const isMobile = width < BREAKPOINT;   // controls hamburger
-  const compact = isMobile;              // use same cutoff for compact header
+  const isMobile = width < BREAKPOINT; // controls hamburger
+  const compact = isMobile; // use same cutoff for compact header
 
   // font load (your original)
   useEffect(() => {
@@ -119,18 +126,26 @@ export default function Header() {
     <View style={styles.fixed}>
       <View style={[styles.bar, compact && { paddingHorizontal: 10 }]}>
         {/* left: logo + title */}
-      <Pressable
-        href="/"
-        accessibilityRole="link"
-        onPress={() => setMenuOpen(false)}
-        style={styles.logoWrap}
-      >
-        <Image source={require("../assets/images/logotransparent.png")} style={styles.logo} />
-        <View>
-          <Text style={[styles.title, { fontFamily: BRAND_SERIF }]}>Lion Dance Team</Text>
-          <Text style={styles.subtitle}>at the University of Florida</Text>
-        </View>
-      </Pressable>
+        <Pressable
+          href="/"
+          accessibilityRole="link"
+          onPress={() => setMenuOpen(false)}
+          style={styles.logoWrap}
+        >
+          <Image
+            source={require("../assets/images/logotransparent.png")}
+            style={styles.logo}
+            accessibilityLabel="UF Lion Dance Team logo"
+          />
+          <View>
+            <Image
+              source={require("../assets/images/ldtname.png")}
+              style={styles.wordmark}
+              resizeMode="contain"
+              accessibilityLabel="UF Lion Dance Team at the University of Florida"
+            />
+          </View>
+        </Pressable>
 
         {/* right: links OR hamburger */}
         {!isMobile ? (
@@ -149,8 +164,19 @@ export default function Header() {
             })}
           </View>
         ) : (
-          <Pressable onPress={() => setMenuOpen((v) => !v)} style={styles.burger} hitSlop={10}>
-            <Text style={[styles.burgerIcon, compact && { fontSize: 24, lineHeight: 24 }]}>☰</Text>
+          <Pressable
+            onPress={() => setMenuOpen((v) => !v)}
+            style={styles.burger}
+            hitSlop={10}
+          >
+            <Text
+              style={[
+                styles.burgerIcon,
+                compact && { fontSize: 24, lineHeight: 24 },
+              ]}
+            >
+              ☰
+            </Text>
           </Pressable>
         )}
       </View>
@@ -200,26 +226,24 @@ const styles = StyleSheet.create({
   },
   logoWrap: { flexDirection: "row", alignItems: "center", gap: 12 },
   logo: { width: 70, height: 70, resizeMode: "contain" },
-title: {
-  fontSize: 28,
-  color: "#000",
-  lineHeight: 30,
-  fontWeight: "900",
-},
+  wordmark: {
+    width: 220,
+    height: 56,
+  },
 
-titlePhone: {
-  fontSize: 16,
-  lineHeight: 22,
-},
+  titlePhone: {
+    fontSize: 16,
+    lineHeight: 22,
+  },
 
-subtitle: {
-  fontSize: 14,
-  color: "#000",
-},
+  subtitle: {
+    fontSize: 14,
+    color: "#000",
+  },
 
-subtitlePhone: {
-  fontSize: 11,
-},
+  subtitlePhone: {
+    fontSize: 11,
+  },
 
   // desktop nav
   links: { flexDirection: "row", gap: 28, alignItems: "center" },
@@ -244,7 +268,12 @@ subtitlePhone: {
 
   // hamburger
   burger: { padding: 10 },
-  burgerIcon: { fontSize: 26, fontWeight: "900", color: "#000", lineHeight: 26 },
+  burgerIcon: {
+    fontSize: 26,
+    fontWeight: "900",
+    color: "#000",
+    lineHeight: 26,
+  },
 
   // mobile dropdown
   mobileMenu: {
